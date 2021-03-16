@@ -1,4 +1,5 @@
 
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -6,46 +7,9 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
+
 xls = pd.ExcelFile('../data/merck_data.xlsx')
 df = pd.read_excel(xls, sheet_name=1)
-
-# EDA visualization
-
-Ru_MALDI = df['Ru MALDI Product Intensity']
-Ru_norm_MALDI = df['Ru Normalized MALDI Pdt/IS']
-Ru_EIC = df['Ru EIC(+)[M+H] Product Area']
-
-Pd_MALDI = df['Pd MALDI Product Intensity']
-Pd_norm_MALDI = df['Pd Normalized MALDI Pdt/IS']
-Pd_EIC = df['Pd EIC(+)[M+H] Product Area']
-
-Ir_MALDI = df['Ir MALDI Product Intensity']
-Ir_norm_MALDI = df['Ir Normalized MALDI Pdt/IS']
-Ir_EIC = df['Ir EIC(+)[M+H] Product Area']
-
-Cu_MALDI = df['Cu MALDI Product Intensity']
-Cu_norm_MALDI = df['Cu Normalized MALDI Pdt/IS']
-Cu_EIC = df['Cu EIC(+)[M+H] Product Area']
-
-norm_MALDI_EIC, ax = plt.subplots()
-ax.scatter(Ru_norm_MALDI, Ru_EIC, label='Ru', alpha=0.5, s=20)
-ax.scatter(Pd_norm_MALDI, Pd_EIC, label='Ru', alpha=0.5, s=20)
-ax.scatter(Ir_norm_MALDI, Ir_EIC, label='Ir', alpha=0.5, s=20)
-ax.scatter(Cu_norm_MALDI, Cu_EIC, label='Cu', alpha=0.5, s=20)
-ax.set_xlim(-0.25, 5)
-ax.legend()
-
-
-MALDI_EIC, ax2 = plt.subplots()
-ax2.scatter(Ru_MALDI, Ru_EIC, label='Ru', alpha=0.5, s=20)
-ax2.scatter(Pd_MALDI, Pd_EIC, label='Ru', alpha=0.5, s=20)
-ax2.scatter(Ir_MALDI, Ir_EIC, label='Ir', alpha=0.5, s=20)
-ax2.scatter(Cu_MALDI, Cu_EIC, label='Cu', alpha=0.5, s=20)
-ax2.legend()
-plt.show()
-
-
-# combining data from each catalyst
 
 X = df.loc[:, 'Location':'Piperazines N-Aryl']
 y_Cu = df.loc[:, 'Cu TWC Product Area': 'Cu Normalized MALDI Pdt/IS']
@@ -76,4 +40,4 @@ df_Ru.rename(columns=dict(zip(df_Ru.columns[-12:-4], df_Ru.columns[-12:-4].str[3
 df_out = pd.concat([df_Cu, df_Ir, df_Pd, df_Ru], axis=0)
 print(df_out)
 
-#df_out.to_csv('../data/merck_data_combined', index=False)
+df_out.to_csv('../data/merck_data_combined', index=False)

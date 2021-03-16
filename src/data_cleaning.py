@@ -33,6 +33,9 @@ ax.scatter(Pd_norm_MALDI, Pd_EIC, label='Ru', alpha=0.5, s=20)
 ax.scatter(Ir_norm_MALDI, Ir_EIC, label='Ir', alpha=0.5, s=20)
 ax.scatter(Cu_norm_MALDI, Cu_EIC, label='Cu', alpha=0.5, s=20)
 ax.set_xlim(-0.25, 5)
+ax.set_xlabel('normalized MALDI intensity')
+ax.set_ylabel('EIC product area')
+ax.set_title('normalized MALDI vs EIC')
 ax.legend()
 
 
@@ -41,6 +44,9 @@ ax2.scatter(Ru_MALDI, Ru_EIC, label='Ru', alpha=0.5, s=20)
 ax2.scatter(Pd_MALDI, Pd_EIC, label='Ru', alpha=0.5, s=20)
 ax2.scatter(Ir_MALDI, Ir_EIC, label='Ir', alpha=0.5, s=20)
 ax2.scatter(Cu_MALDI, Cu_EIC, label='Cu', alpha=0.5, s=20)
+ax2.set_xlabel('raw MALDI intensity')
+ax2.set_ylabel('EIC product area')
+ax2.set_title('raw MALDI vs EIC')
 ax2.legend()
 plt.show()
 
@@ -76,4 +82,4 @@ df_Ru.rename(columns=dict(zip(df_Ru.columns[-12:-4], df_Ru.columns[-12:-4].str[3
 df_out = pd.concat([df_Cu, df_Ir, df_Pd, df_Ru], axis=0)
 print(df_out)
 
-#df_out.to_csv('../data/merck_data_combined', index=False)
+#df_out.to_csv('../data/merck_data_combined.csv', index=False)

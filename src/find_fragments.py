@@ -1,7 +1,7 @@
 from smiles_to_structure import convert_to_structure, MoleculeStructure
 from collections import Counter
 from termcolor import cprint
-from fragments_library import biomolecules, peptide_amino_acids, heterocycles, arenes, functional_groups, hydrocarbons
+from fragments_library import special_case, biomolecules, peptide_amino_acids, heterocycles, arenes, functional_groups, hydrocarbons
 
 
 class AtomData:
@@ -24,7 +24,8 @@ def abbr_bond(bond):
     return bond.bond_code, bond.atom.symbol
 
 
-def check_bond(bond, map_bond, bond_atom_info):  # bond_atom_info is the atom_info of the atom for the bond being checked (to see if it's a phantom bond/discovered)
+# bond_atom_info is the atom_info of the atom for the bond being checked (to see if it's a phantom bond/discovered)
+def check_bond(bond, map_bond, bond_atom_info):
 
     # if the bond.atom is discovered already, it should give back false (can't retread over discovered atoms)
     # unless the atom_info for that atom shows that the bond.atom should be a phantom atom (which can be searched for in discovered atoms)
@@ -70,7 +71,7 @@ def find_fragment(fragment_string, molecule_string, structure=None):
     fragment_structure = convert_to_structure(MoleculeStructure(), fragment_string)
 
     def find_anchor_atom(fragment):
-        for ele in ["Si", "P", "p", "S", "s", "I", "Br", "Cl", "F", "B", "b", "O", "o", "N", "n", "C", "c"]:
+        for ele in ["Si", "P", "p", "S", "s", "I", "Br", "Cl", "F", "B", "b", "O", "o", "N", "n", "C", "c", "R"]:
             for atom in fragment.atom_list:
                 if atom.symbol == ele:
                     return atom
@@ -531,17 +532,18 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False):
             atoms_not_discovered += 1
     cprint(f"atoms not found: {atoms_not_discovered}", "red")
     if atoms_not_discovered > 0:
-        total_frags = 0
-        for lib in fragment_libraries:
-            total_frags += len(lib)
-        return ["NA" for _ in range(total_frags)]  # TODO make this total length of libraries
+        # total_frags = 0
+        # for lib in fragment_libraries:
+        #     total_frags += len(lib)
+        print(molecule_string)
+        # return ["NA" for _ in range(total_frags)]  # TODO make this total length of libraries
     if numeric:
         return fragments_counter
     else:
         return fragments
 
 
-print(fragmentize(r"O=C1C=C(CN)ON1", biomolecules, peptide_amino_acids, heterocycles, arenes, functional_groups, hydrocarbons))
+print(fragmentize(r"Cc1onc(Br)n1", special_case, biomolecules, peptide_amino_acids, heterocycles, arenes, functional_groups, hydrocarbons))
 
 
 

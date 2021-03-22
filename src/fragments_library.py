@@ -7,6 +7,12 @@
 
 # TODO may need to distinguish between susbistuted amine heterocycles (i.e. methyl piperidine and piperidine)
 
+'''library of fragments for subgraph searching'''
+
+
+special_case = {
+    'R-group': ['R']
+}
 
 biomolecules = {
     "pyranose": ["OCC1OCC(O)C(O)C1O"],
@@ -107,6 +113,7 @@ heterocycles = {
     "pyrrolidine": ["N1CCCC1"],
     "pyrazolidine": ["N1NCCC1"],
     "piperidine": ["C1CCNCC1"],
+    "1,2,4-5M-het": ['R&1&R&R&R&R&1']
     }
 
 arenes = {
@@ -126,15 +133,16 @@ functional_groups = {
     "isocyanate": ["N=C=O"],
     "isothiocyanate": ["N=C=S"],
     "nitrosamine": ["NN=O"],
-    "nitroso": ["N=O"],
     "nitro(aryl)": ["ON({c})(=O)", "ON({C1CCCCC1})(=O)", "N({c})(=O)(=O)", "N({C1CCCCC1})(=O)(=O)"],
     "nitro": ["ON(=O)", "N(=O)(=O)"],
+    "nitroso": ["N=O"],
     "1,3-dioxolane": ["C1OCCO1"],
     "Urea": ["O=C(N)N"],
     "Thiourea": ["S=C(N)N"],
     "carbamate": ["O=C(N)O"],
     "carbamyl": ["O=C({N})O"],
     "Cyano": ["C#N"],
+    "trifluoromethyl(aryl)": ["C(F)(F)(F){c1ccccc1}"],
     "trifluoromethyl": ["C(F)(F)F"],
     "difluoromethyl": ["C(F)F"],
     "hydrazide(acyl)": ["NNC=O"],
@@ -176,7 +184,7 @@ functional_groups = {
     "ketone": ["O=C({C}){C}"],
     "methoxy": ["WCOX"],
     "ether(aryl)": ["XO{C1=CC=CC=C1}", "XO{c1ccccc1}"],
-    "ether": ["OX"],
+    "-": ["OX"],
     "hydroxy(aryl)": ["WO{C1=CC=CC=C1}", "WO{c1ccccc1}", "WO({c})"],
     "hydroxyl": ["WO({C})"],
     "oxo": ["O"],

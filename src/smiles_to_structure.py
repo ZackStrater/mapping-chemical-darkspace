@@ -2,6 +2,12 @@ from structure_to_smiles import Atom, Bond, convert_to_smiles
 import re
 
 
+'''converts smiles string to molecular structure'''
+
+
+
+
+
 class MoleculeStructure:
 
     def __init__(self):
@@ -83,7 +89,7 @@ bond_encoder = {
     "/": 6,  # vinyl up
     "\\": 7,  # vinyl down
     ".": 8,  # non-bond
-    "&": 9 # any bond
+    "&": 9  # any bond
 }
 
 

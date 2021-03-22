@@ -1,5 +1,8 @@
 import re
 
+'''converts molecular structure to smiles string'''
+
+
 
 class Atom:
 

@@ -1,4 +1,4 @@
-from structure_to_smiles import Atom, Bond, convert_to_smiles
+from structure_to_smiles import convert_to_smiles
 import re
 
 
@@ -6,6 +6,26 @@ import re
 
 
 
+class Atom:
+
+    def __init__(self, symbol):
+        self.symbol = symbol
+        self.bonded_to = []
+        self.can_bond = False
+        self.heteroatom = False
+        if self.symbol not in ["C", "c", "H"]:
+            self.heteroatom = True
+        self.discovered = False
+        self.phantom_bonds = None
+        self.phantom_atom = False
+        self.fragment = None
+
+
+class Bond:
+
+    def __init__(self, atom, bond_code):
+        self.atom = atom
+        self.bond_code = bond_code
 
 
 class MoleculeStructure:
@@ -81,10 +101,21 @@ class MoleculeStructure:
         print(formula_string.translate(str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")))
 
 
+class Fragment(MoleculeStructure):
+    def __init__(self, name):
+        MoleculeStructure.__init__(self)
+        self.name = name
+        self.fragment_bonded_to = []
+        for atom in self.atom_list:
+            atom.fragment = self
+            for bond in atom.bonded_to:
+                if bond.atom.fragment != self:
+                    self.fragment_bonded_to.append(bond.atom.fragment)
+
 bond_encoder = {
     "=": 2,  # double bond
     "#": 3,  # triple bond
-    # aromatic bonds (4) denoted by lowercase element symbol
+    "+": 4, # aromatic bonds also denoted by lowercase element symbols
     "$": 5,  # ionic bond
     "/": 6,  # vinyl up
     "\\": 7,  # vinyl down
@@ -230,6 +261,8 @@ def convert_to_structure(molecule, smiles_string):  # TODO need to make it so yo
         atom.bonded_to = [bond for bond in atom.bonded_to if bond.atom.symbol != "E" and bond.atom.symbol not in phantom_bonds_dict]
     molecule.atom_list = [atom for atom in molecule.atom_list if atom.symbol != "E" and atom.symbol not in phantom_bonds_dict]
     return molecule
+
+
 
 
 

@@ -11,7 +11,8 @@
 
 
 special_case = {
-    'R-group': ['R']
+    'R-group': ['R'],
+    # "1,2,4-5M-het": ['c+1+Q+Q+c+Q+1']
 }
 
 biomolecules = {
@@ -113,7 +114,6 @@ heterocycles = {
     "pyrrolidine": ["N1CCCC1"],
     "pyrazolidine": ["N1NCCC1"],
     "piperidine": ["C1CCNCC1"],
-    "1,2,4-5M-het": ['R&1&R&R&R&R&1']
     }
 
 arenes = {
@@ -184,7 +184,7 @@ functional_groups = {
     "ketone": ["O=C({C}){C}"],
     "methoxy": ["WCOX"],
     "ether(aryl)": ["XO{C1=CC=CC=C1}", "XO{c1ccccc1}"],
-    "-": ["OX"],
+    "ether": ["OX"],
     "hydroxy(aryl)": ["WO{C1=CC=CC=C1}", "WO{c1ccccc1}", "WO({c})"],
     "hydroxyl": ["WO({C})"],
     "oxo": ["O"],
@@ -247,7 +247,9 @@ hydrocarbons = {
     }
 
 
-
+Aromatic_Fragments = {
+    "1,3-cyclohexadiene": ["C1C=CC=CC1"],
+    }
 
 
 

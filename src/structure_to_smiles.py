@@ -4,27 +4,6 @@ import re
 
 
 
-class Atom:
-
-    def __init__(self, symbol):
-        self.symbol = symbol
-        self.bonded_to = []
-        self.can_bond = False
-        self.heteroatom = False
-        if self.symbol not in ["C", "c", "H"]:
-            self.heteroatom = True
-        self.discovered = False
-        self.phantom_bonds = None
-        self.phantom_atom = False
-
-
-class Bond:
-
-    def __init__(self, atom, bond_code):
-        self.atom = atom
-        self.bond_code = bond_code
-
-
 bond_decoder = {   # TODO add chiral stereochemistry
     1: "",  # single bond
     2: "=",  # double bond
@@ -116,11 +95,11 @@ def convert_to_smiles(molecule, start):    # TODO don't have molecule as an arg,
     # begin dfs process
 
     # TODO does this even do anything? maybe trying to reorder ring numbers so they go in order?
-    atom_ring_list = []
-    for ele in smiles_construction_list:
-        if isinstance(ele, Atom):
-            if len(atom_info[ele].ring_closures) > 0:
-                atom_ring_list.append(smiles_construction_list.index(ele))
+    # atom_ring_list = []
+    # for ele in smiles_construction_list:
+    #     if isinstance(ele, Atom):
+    #         if len(atom_info[ele].ring_closures) > 0:
+    #             atom_ring_list.append(smiles_construction_list.index(ele))
 
     # building the smiles string
     for ele in smiles_construction_list:

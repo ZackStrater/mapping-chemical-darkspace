@@ -102,15 +102,24 @@ class MoleculeStructure:
 
 
 class Fragment(MoleculeStructure):
-    def __init__(self, name):
+    def __init__(self, name, atom_list):
         MoleculeStructure.__init__(self)
         self.name = name
+        self.atom_list = atom_list
         self.fragment_bonded_to = []
+        # for atom in self.atom_list: TODO this needs to be a new function on the moleculerstructure class
+        #     atom.fragment = self
+        #     for bond in atom.bonded_to:
+        #         if bond.atom.fragment != self:
+        #             self.fragment_bonded_to.append(bond.atom.fragment)
+
+    def generalize_heterocycle_name(self):
+        heteroatoms = 0
         for atom in self.atom_list:
-            atom.fragment = self
-            for bond in atom.bonded_to:
-                if bond.atom.fragment != self:
-                    self.fragment_bonded_to.append(bond.atom.fragment)
+            if atom.heteroatom:
+                heteroatoms += 1
+        print('I am happening')
+        self.name = f'{heteroatoms}-' + self.name
 
 bond_encoder = {
     "=": 2,  # double bond

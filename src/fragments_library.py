@@ -1,6 +1,9 @@
 
 # TODO need to introduce a system to check anonymous heterocycles and polycyclic systems
 
+# TODO add N-O bonds as well as stray aromatic and non aromatic atoms
+# TODO add aryl fragments
+
 # TODO maybe add system where atom has a fragemnt attribute (so you can tell if a nitrogen is conjugated for example)
 
 # TODO add phantom bonds to pyridine etc so as not to include pyridinium
@@ -9,11 +12,6 @@
 
 '''library of fragments for subgraph searching'''
 
-
-special_case = {
-    'R-group': ['R'],
-    # "1,2,4-5M-het": ['c+1+Q+Q+c+Q+1']
-}
 
 biomolecules = {
     "pyranose": ["OCC1OCC(O)C(O)C1O"],
@@ -116,6 +114,16 @@ heterocycles = {
     "piperidine": ["C1CCNCC1"],
     }
 
+generalized_heterocycles = {
+    # 'R-group': ['R'],
+    "6+5M-het": ['R+1+R+2+R+R+R+R+R2+R+R1'],
+    "6+6M-het": ['R+1+R+2+R+R+R+R+R2+R+R+R1'],
+    "6M-het": ['R+1+R+R+R+R+R1'],
+    "5M-het": ['R+1+R+R+R+R1'],
+
+}
+
+
 arenes = {
     "anthracene": ["C12=CC=CC=C1C=C3C(C=CC=C3)=C2", "C1(C=C(C=CC=C2)C2=C3)=C3C=CC=C1", "c12ccccc1cc3c(cccc3)c2"],
     "phenanthrene": ["C12=CC=CC=C1C3=CC=CC=C3C=C2", "C12=CC=CC=C1C(C=CC=C3)=C3C=C2", "c12ccccc1c3ccccc3cc2"],
@@ -142,7 +150,7 @@ functional_groups = {
     "carbamate": ["O=C(N)O"],
     "carbamyl": ["O=C({N})O"],
     "Cyano": ["C#N"],
-    "trifluoromethyl(aryl)": ["C(F)(F)(F){c1ccccc1}"],
+    "trifluoromethyl(aryl)": ["C(F)(F)(F){c}"],
     "trifluoromethyl": ["C(F)(F)F"],
     "difluoromethyl": ["C(F)F"],
     "hydrazide(acyl)": ["NNC=O"],
@@ -151,9 +159,9 @@ functional_groups = {
     "oxime(substituted)": ["C=NOX"],
     "hydrazone": ["C=NN"],
     "hydrazine": ["NN"],
-    "sulfonamide(aryl)": ["O=S({C1=CC=CC=C1})(N)=O", "O=S({c1ccccc1})(N)=O"],
+    "sulfonamide(aryl)": ["O=S({C1=CC=CC=C1})(N)=O", "O=S({c})(N)=O"],
     "sulfonamide": ["O=S(N)=O"],
-    "carboxylic acid(aryl)": ["O=C({c})OW"],
+    "carboxylic acid(aryl)": ["O=C({c})OW", "O=C({C1=CC=CC=C1})OW"],
     "carboxylic acid": ["O=C({C})OW"],
     "acetoxy": ["WCC(OX)=O"],
     "methyl ester": ["O=C({C})OCW", "O=C({c})OCW"],
@@ -169,7 +177,7 @@ functional_groups = {
     "sulfonic acid": ["O=S(O)=O"],
     "sulfone": ["O=S=O"],
     "sulfoxide": ["O=SY"],
-    "thiol(aryl)": ["WS{C1=CC=CC=C1}", "WS{c1ccccc1}"],
+    "thiol(aryl)": ["WS{C1=CC=CC=C1}", "WS{c}"],
     "thiol": ["SW"],
     "disulfide": ["SS"],
     "thioether": ["SX"],
@@ -180,18 +188,18 @@ functional_groups = {
     "enone": ["C=CC=O"],
     "enol": ["C=COW"],
     "aldehyde": ["O=C(X){C}", "O=C(X){c}"],
-    "ketone(aryl)": ["O=C({c}){C}", "O=C({c}){c}", "O=C{C1=CC=CC=C1}"],
+    "ketone(aryl)": ["O=C({c}){C}", "O=C({c}){c}", "O=C({C}){C1=CC=CC=C1}"],
     "ketone": ["O=C({C}){C}"],
     "methoxy": ["WCOX"],
-    "ether(aryl)": ["XO{C1=CC=CC=C1}", "XO{c1ccccc1}"],
+    "ether(aryl)": ["XO{C1=CC=CC=C1}", "XO{c}"],
     "ether": ["OX"],
-    "hydroxy(aryl)": ["WO{C1=CC=CC=C1}", "WO{c1ccccc1}", "WO({c})"],
+    "hydroxy(aryl)": ["WO{C1=CC=CC=C1}", "WO({c})"],
     "hydroxyl": ["WO({C})"],
     "oxo": ["O"],
     "diazo": ["N=N"],
     "dimethylamine": ["WCNCW"],
     "diethylamine": ["WC(CY)N(CY)CW"],
-    "amine(aryl)": ["N{C1=CC=CC=C1}", "N{c1ccccc1}"],
+    "amine(aryl)": ["N{C1=CC=CC=C1}", "N{c}"],
     "primary amine": ["NW"],
     "secondary amine": ["NX"],
     "tertiary amine": ["NY"],
@@ -199,10 +207,10 @@ functional_groups = {
     "chloride(ammonium)": ["Cl{N(C)(C)(C)(C)}"],
     "bromide(ammonium)": ["Br{N(C)(C)(C)(C)}"],
     "iodide(ammonium": ["I{N(C)(C)(C)(C)}"],
-    "fluoro(aryl)": ["F{C1=CC=CC=C1}", "F{c1ccccc1}"],
-    "chloro(aryl)": ["Cl{C1=CC=CC=C1}", "Cl{c1ccccc1}"],
-    "bromo(aryl)": ["Br{C1=CC=CC=C1}", "Br{c1ccccc1}"],
-    "iodo(aryl)": ["I{C1=CC=CC=C1}", "I{c1ccccc1}"],
+    "fluoro(aryl)": ["F{C1=CC=CC=C1}", "F{c}"],
+    "chloro(aryl)": ["Cl{C1=CC=CC=C1}", "Cl{c}"],
+    "bromo(aryl)": ["Br{C1=CC=CC=C1}", "Br{c}"],
+    "iodo(aryl)": ["I{C1=CC=CC=C1}", "I{c}"],
     "fluoro": ["F"],
     "chloro": ["Cl"],
     "bromo": ["Br"],
@@ -215,7 +223,6 @@ hydrocarbons = {
     "cyclohexene": ["C1CCC=CC1"],
     "1,3-cyclopentadiene": ["C1C=CC=C1"],
     "cyclopentene": ["C1CCC=C1"],
-    "arene ring fragment": ["{C1}=CC=CC={C1}", "{C}=1C=CC=C{C1}", "{C1}C=CC=C{C1}"],  # TODO come back to this one
     "cis alkene": [r"{R}/C(X)=C(X)\{R}", r"{R}\C(X)=C(X)/{R}"],
     "trans alkene": [r"{R}\C(X)=C(X)\{R}", r"{R}/C(X)=C(X)/{R}"],
     "terminal alkene": ["C=CW"],

@@ -1,7 +1,7 @@
-from smiles_to_structure import convert_to_structure, MoleculeStructure
+from smiles_to_structure import convert_to_structure, MoleculeStructure, Fragment
 from collections import Counter
 from termcolor import cprint
-from fragments_library import special_case, biomolecules, peptide_amino_acids, heterocycles, arenes, functional_groups, hydrocarbons
+from fragments_library import biomolecules, peptide_amino_acids, heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons
 
 
 class AtomData:
@@ -62,7 +62,7 @@ def calc_branch_length(branch):
     return branch_length
 
 
-def find_fragment(fragment_string, molecule_string, structure=None):
+def find_fragment(fragment_string, molecule_string, fragment_name, structure=None):
     verbose_bin = []
 
     if structure:
@@ -90,7 +90,7 @@ def find_fragment(fragment_string, molecule_string, structure=None):
             return
         # atom has already been used to find a fragment
 
-        if atom.symbol != fragment_anchor_atom.symbol:  # TODO what if all atoms in search fragment are R or Q???
+        if atom.symbol != fragment_anchor_atom.symbol and fragment_anchor_atom.symbol != 'R':  # TODO what about if anchor atom is Q!??
             return
             # check to see if atom is the same element
 
@@ -476,68 +476,115 @@ def find_fragment(fragment_string, molecule_string, structure=None):
             for atom in molecule_atoms:
                 verbose_bin.append(atom.symbol)
             verbose_bin.append("matched fragment to anchor atom")
-            return True
+            return Fragment(fragment_name, list(molecule_atoms)) # TODO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         else:
             verbose_bin.append("anchor atom not matched to fragment")
             return False
         # start from check_branch point on the potential anchor atom
         # the anchor atom in map is treated as a branch point, even if it only has 1 branch
 
+
+
     fragment_counter = 0
+    fragments_identified = []
     for atom in potential_anchor_atoms:
         verbose_bin.append("checking anchor atom")
         for bond in atom.bonded_to:
             verbose_bin.append(abbr_bond(bond))
-        if check_anchor_atom(atom, anchored_fragment_map):
+        is_found_fragment = check_anchor_atom(atom, anchored_fragment_map)
+        if is_found_fragment:
+            # add atoms found to fragment
             fragment_counter += 1
+            fragments_identified.append(is_found_fragment)
 
     verbose_bin.append(f"\nnumber of fragments found: {fragment_counter}")
-    for item in verbose_bin:
-        print(item)
+    # for item in verbose_bin:
+    #     print(item)
 
-    return fragment_counter  # TODO may want to change the return to something else eventually (the particular atoms???)
+    return fragments_identified
 
-
-# TODO exact match on NC1(CCC2=CC=C3C=C4C(C5C4C5)=CC3=C21)OCCCC(C=C6)=CC=C6C7=CC8=C(C9CC98)C(C%10=C%11C(CCCN%11)=CC(C=O)=C%10)=C7C(CC(C)C)C
 
 
 def fragmentize(molecule_string, *fragment_libraries, numeric=False):
 
-    molecular_structure = convert_to_structure(MoleculeStructure(), molecule_string)
+    molecule_structure = convert_to_structure(MoleculeStructure(), molecule_string)
     fragments = []
+    fragment_names = []
     fragments_counter = []
+
+    generalized_heterocycles = []
     for lib in fragment_libraries:
-        for frag in lib:
-            # print("\n\n")
-            # cprint(frag, "magenta")
-            if numeric:
+        if lib != generalized_heterocycles:
+            for frag in lib:
                 frag_num = 0
                 for frag_res_structure in lib[frag]:
-                    frag_num += (find_fragment(frag_res_structure, None, molecular_structure))
-                fragments_counter.append(frag_num)
-            else:
+                    frag_res_found = find_fragment(frag_res_structure, None, frag, structure=molecule_structure)
+                    if frag_res_found:
+                        frag_num += len(frag_res_found)
+                        fragments_counter.append(frag_num)
+                        # can find multiples of a fragment
+                        for f in frag_res_found:
+                            fragments.append(f)
+                            fragment_names.append(f.name)
+                    else:
+                        fragments_counter.append(0)
+        # for generalized heterocycles
+        else:
+            for frag in lib:
                 for frag_res_structure in lib[frag]:
-                    for f in range(find_fragment(frag_res_structure, None, molecular_structure)):
-                        fragments.append(frag)
+                    frag_res_found = find_fragment(frag_res_structure, None, frag, structure=molecule_structure)
+                    if frag_res_found:
+                        for f in frag_res_found:
+                            f.generalize_heterocycle_name()
+                            generalized_heterocycles.append(f)
+
+    if generalized_heterocycles:
+        generalized_heterocycles_names = ["0-5M-het", "1-5M-het", "2-5M-het", "3-5M-het", "4-5M-het",
+                                          "0-6M-het", "1-6M-het", "2-6M-het", "3-6M-het", "4-6M-het"
+                                          "0-6+5M-het", "1-6+5M-het", "2-6+5M-het", "3-6+5M-het", "4-6+5M-het", "5-6+5M-het", "6-6+5M-het"
+                                          "0-6+6M-het", "1-6+6M-het", "2-6+6M-het", "3-6+6M-het", "4-6+6M-het", "5-6+6M-het", "6-6+6M-het"]
+
+        found_heterocycles_counter = []
+        found_heterocycles_names = [fragment.name for fragment in generalized_heterocycles]
+        for name in generalized_heterocycles_names:
+            frag_num = 0
+            for fragment in found_heterocycles_names:
+                if fragment.name == name:
+                    frag_num += 1
+            found_heterocycles_counter += 1
+        for name in found_heterocycles_names:
+            fragment_names.append(name)
+        for num in found_heterocycles_counter:
+            fragments_counter.append(num)
+        for fragment in generalized_heterocycles:
+            fragments.append(fragment)
+
     atoms_not_discovered = 0
-    for atom in molecular_structure.atom_list:
+    for atom in molecule_structure.atom_list:
         if not atom.discovered:
             atoms_not_discovered += 1
-    cprint(f"atoms not found: {atoms_not_discovered}", "red")
+    # cprint(f"atoms not found: {atoms_not_discovered}", "red")
     if atoms_not_discovered > 0:
         # total_frags = 0
         # for lib in fragment_libraries:
         #     total_frags += len(lib)
         print(molecule_string)
-        # return ["NA" for _ in range(total_frags)]  # TODO make this total length of libraries
+        # return ["NA" for _ in range(total_frags)]
     if numeric:
-        return fragments_counter
+        return fragments_counter, fragments
     else:
-        return fragments
+        return fragment_names, fragments
 
 
-print(fragmentize(r"[R]c1c([R])c2nnc([R])n2nc1OCc3ccccc3Br", special_case, biomolecules, peptide_amino_acids, heterocycles, arenes, functional_groups, hydrocarbons))
+# print(fragmentize(r"n1c2ccccc2ccc1", generalized_heterocycles))
+names, fragments = fragmentize(r"O=C(Nc1cccnc1)c2nnn(Cc3ccccc3)c2C4CCNCC4", biomolecules, peptide_amino_acids, generalized_heterocycles, arenes, functional_groups, hydrocarbons)
+print(names, fragments)
 
-
+for fragment in fragments:
+    print(fragment.name)
+    for f in fragment.fragment_bonded_to:
+        print(fragment.name)
+    for atom in fragment.atom_list:
+        print(atom.symbol)
 
 

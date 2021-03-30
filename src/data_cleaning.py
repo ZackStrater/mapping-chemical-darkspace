@@ -29,10 +29,9 @@ Cu_EIC = df['Cu EIC(+)[M+H] Product Area']
 
 norm_MALDI_EIC, ax = plt.subplots()
 ax.scatter(Ru_norm_MALDI, Ru_EIC, label='Ru', alpha=0.5, s=20)
-ax.scatter(Pd_norm_MALDI, Pd_EIC, label='Ru', alpha=0.5, s=20)
+ax.scatter(Pd_norm_MALDI, Pd_EIC, label='Pd', alpha=0.5, s=20)
 ax.scatter(Ir_norm_MALDI, Ir_EIC, label='Ir', alpha=0.5, s=20)
 ax.scatter(Cu_norm_MALDI, Cu_EIC, label='Cu', alpha=0.5, s=20)
-ax.set_xlim(-0.25, 5)
 ax.set_xlabel('normalized MALDI intensity')
 ax.set_ylabel('EIC product area')
 ax.set_title('normalized MALDI vs EIC')

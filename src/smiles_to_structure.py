@@ -62,7 +62,7 @@ class MoleculeStructure:
         element_weights = {
             "N": 14.0067, "O": 15.9994, "P": 30.9738, "Si": 28.086, "S": 32.06,
             "F": 18.9984, "Cl": 35.453, "Br": 79.904,"I": 126.904, "C": 12.011, "B": 10.81,
-            "b": 10.81, "c": 12.011, "n": 14.0067, "o": 15.9994, "p": 30.9738, "s": 32.06
+            "b": 10.81, "c": 12.011, "n": 14.0067, "o": 15.9994, "p": 30.9738, "s": 32.06, "R": 0
         }
 
         for atom in self.atom_list:
@@ -70,13 +70,12 @@ class MoleculeStructure:
 
         molecular_weight += 1.00784*self.H_atoms()
 
-        print(molecular_weight)
         return molecular_weight
 
     def formula(self):
         symbol_counts = {
             "C": 0, "H": 0, "B": 0, "Br": 0, "Cl": 0, "F": 0, "I": 0, "N": 0, "O": 0, "P": 0,  "S": 0, "Si": 0,
-            "b": 0, "c": 0, "n": 0, "o": 0, "p": 0, "s": 0
+            "b": 0, "c": 0, "n": 0, "o": 0, "p": 0, "s": 0, "R": 0
         }
 
         for atom in self.atom_list:
@@ -99,7 +98,7 @@ class MoleculeStructure:
             if value > 0:
                 formula_string += key + str(value)
 
-        print(formula_string.translate(str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")))
+        return formula_string.translate(str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉"))
 
 
 

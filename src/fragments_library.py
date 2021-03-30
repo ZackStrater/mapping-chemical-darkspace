@@ -135,10 +135,6 @@ common_aromatic_heterocycles = {
     "pyridine": ["C1=CC=CC=N1", "c1ccccn1"],
     "tetrazole": ["C1=NN=NN1", "C1=NNN=N1", "c1nnnn1"],
     "pyrrole": ["N1C=CC=C1", "n1cccc1"],
-    "piperazine": ["N1CCNCC1"],  # TODO @@@@@@@@@@@@@@@@@@
-    "pyrrolidine": ["N1CCCC1"],
-    "pyrazolidine": ["N1NCCC1"],
-    "piperidine": ["C1CCNCC1"],
     }
 
 generalized_heterocycles = {
@@ -148,6 +144,11 @@ generalized_heterocycles = {
     "5M-het": ['R%1%R%R%R%R1'],
     }
 
+secondary_amines = {
+    "piperazine": ["N1CCNCC1"],
+    "pyrrolidine": ["N1CCCC1"],
+    "pyrazolidine": ["N1NCCC1"],
+    "piperidine": ["C1CCNCC1"]}
 
 arenes = {
     "anthracene": ["C12=CC=CC=C1C=C3C(C=CC=C3)=C2", "C1(C=C(C=CC=C2)C2=C3)=C3C=CC=C1", "c12ccccc1cc3c(cccc3)c2"],

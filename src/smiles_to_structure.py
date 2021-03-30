@@ -32,6 +32,7 @@ class MoleculeStructure:
 
     def __init__(self):
         self.atom_list = []
+        self.fragments_list = []
 
     def H_atoms(self):
         expected_bonds_dict = {
@@ -101,6 +102,7 @@ class MoleculeStructure:
         print(formula_string.translate(str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")))
 
 
+
 class Fragment(MoleculeStructure):
     def __init__(self, name, atom_list):
         MoleculeStructure.__init__(self)
@@ -118,13 +120,12 @@ class Fragment(MoleculeStructure):
         for atom in self.atom_list:
             if atom.heteroatom:
                 heteroatoms += 1
-        print('I am happening')
         self.name = f'{heteroatoms}-' + self.name
 
 bond_encoder = {
     "=": 2,  # double bond
     "#": 3,  # triple bond
-    "+": 4, # aromatic bonds also denoted by lowercase element symbols
+    "%": 4, # aromatic bonds also denoted by lowercase element symbols
     "$": 5,  # ionic bond
     "/": 6,  # vinyl up
     "\\": 7,  # vinyl down
@@ -152,7 +153,7 @@ def convert_to_structure(molecule, smiles_string):  # TODO need to make it so yo
     # TODO need to find a way to deal with nonindcluded atoms
     # TODO right now if it CGe(C)(C)(C), the first carbon won't have the parens in its bonding info
     # TODO also maybe need to change this try, except
-    corrected_smiles_string = re.sub(r"[\[\]H@]", "", pre_correction)  # TODO need to change this at some point
+    corrected_smiles_string = re.sub(r"[\[\]H@+-]", "", pre_correction)  # TODO need to change this at some point
     # if fragment has phantom atoms (signified by portions encapsulated by {}), add an * to each of those atoms
     if re.search(r"[{}]", corrected_smiles_string):
         def add_phantom_atoms(matchobj):
@@ -210,7 +211,6 @@ def convert_to_structure(molecule, smiles_string):  # TODO need to make it so yo
             # make Bond between current Atom and Atom (i + 1)
             if i != (len(molecule.atom_list) - 1):
                 # prevents index error on last Atom TODO see if there is a better way to do this line
-                # # TODO maybe split into range 0 - len(molecule_list) for above stuff and a seperate 0-range_moleculelist -1 for this part
                 molecule.atom_list[i].bonded_to.append(Bond(molecule.atom_list[i + 1], encode_bond(bond_info)))
                 molecule.atom_list[i + 1].bonded_to.append(Bond(molecule.atom_list[i], encode_bond(bond_info)))
                 if "(" in bond_info:
@@ -219,7 +219,7 @@ def convert_to_structure(molecule, smiles_string):  # TODO need to make it so yo
         else:
             # if ")" in bond_info, count the # of ")"'s and go back that many "("'s in the string
             # and make Bond from atom before last "(" and the next atom (i + 1)
-            if i != (len(molecule.atom_list) - 1):  # TODO see if there is a better way to do this line
+            if i != (len(molecule.atom_list) - 1):  # TODO same as above
                 # important not to include last item here, ")" at the end of a string don't actually give structural information
                 parentheses_count = bond_info.count(")")
                 # counts # of ")" in bond_info and bonds current Atom to
@@ -270,8 +270,6 @@ def convert_to_structure(molecule, smiles_string):  # TODO need to make it so yo
         atom.bonded_to = [bond for bond in atom.bonded_to if bond.atom.symbol != "E" and bond.atom.symbol not in phantom_bonds_dict]
     molecule.atom_list = [atom for atom in molecule.atom_list if atom.symbol != "E" and atom.symbol not in phantom_bonds_dict]
     return molecule
-
-
 
 
 

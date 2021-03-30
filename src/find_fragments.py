@@ -1,7 +1,8 @@
 from smiles_to_structure import convert_to_structure, MoleculeStructure, Fragment
 from collections import Counter
 from termcolor import cprint
-from fragments_library import biomolecules, peptide_amino_acids, heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons
+from fragments_library import special_cases, biomolecules, peptide_amino_acids, heterocycles, \
+    common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments
 
 
 class AtomData:
@@ -62,7 +63,7 @@ def calc_branch_length(branch):
     return branch_length
 
 
-def find_fragment(fragment_string, molecule_string, fragment_name, structure=None):
+def find_fragment(fragment_string, molecule_string, fragment_name, structure=None, verbose=False):
     verbose_bin = []
 
     if structure:
@@ -181,7 +182,7 @@ def find_fragment(fragment_string, molecule_string, fragment_name, structure=Non
             elif len(unchecked_bonds) == 1:
                 if current_branch:
                     if not visited[unchecked_bonds[0].atom]:
-                        verbose_bin.append("contin branch")
+                        verbose_bin.append("continue branch")
                         current_atom_data.bond = abbr_bond(unchecked_bonds[0])
                         traverse(unchecked_bonds[0].atom, current_atom, current_branch)
                     elif not bool(current_atom_data.ring_closures & atom_info_dict[unchecked_bonds[0].atom].ring_closures):
@@ -498,27 +499,28 @@ def find_fragment(fragment_string, molecule_string, fragment_name, structure=Non
             fragments_identified.append(is_found_fragment)
 
     verbose_bin.append(f"\nnumber of fragments found: {fragment_counter}")
-    # for item in verbose_bin:
-    #     print(item)
+    if verbose:
+        for item in verbose_bin:
+            print(item)
 
     return fragments_identified
 
 
 
-def fragmentize(molecule_string, *fragment_libraries, numeric=False):
+def fragmentize(molecule_string, *fragment_libraries, numeric=False, verbose=False):
 
     molecule_structure = convert_to_structure(MoleculeStructure(), molecule_string)
     fragments = []
     fragment_names = []
     fragments_counter = []
 
-    generalized_heterocycles = []
+    generalized_heterocycles_found = []
     for lib in fragment_libraries:
         if lib != generalized_heterocycles:
             for frag in lib:
                 frag_num = 0
                 for frag_res_structure in lib[frag]:
-                    frag_res_found = find_fragment(frag_res_structure, None, frag, structure=molecule_structure)
+                    frag_res_found = find_fragment(frag_res_structure, None, frag, structure=molecule_structure, verbose=verbose)
                     if frag_res_found:
                         frag_num += len(frag_res_found)
                         fragments_counter.append(frag_num)
@@ -532,59 +534,76 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False):
         else:
             for frag in lib:
                 for frag_res_structure in lib[frag]:
-                    frag_res_found = find_fragment(frag_res_structure, None, frag, structure=molecule_structure)
+                    frag_res_found = find_fragment(frag_res_structure, None, frag, structure=molecule_structure, verbose=verbose)
                     if frag_res_found:
                         for f in frag_res_found:
                             f.generalize_heterocycle_name()
-                            generalized_heterocycles.append(f)
+                            generalized_heterocycles_found.append(f)
 
-    if generalized_heterocycles:
+    if generalized_heterocycles_found:
+        # possible varieties of generalized heterocycles
+        # name format: X-Y+ZM-het where X is number of heteroatoms, Y is the number of atoms in the ring and
+        # Z is the number of atoms in the fused ring
         generalized_heterocycles_names = ["0-5M-het", "1-5M-het", "2-5M-het", "3-5M-het", "4-5M-het",
-                                          "0-6M-het", "1-6M-het", "2-6M-het", "3-6M-het", "4-6M-het"
-                                          "0-6+5M-het", "1-6+5M-het", "2-6+5M-het", "3-6+5M-het", "4-6+5M-het", "5-6+5M-het", "6-6+5M-het"
+                                          "0-6M-het", "1-6M-het", "2-6M-het", "3-6M-het", "4-6M-het",
+                                          "0-6+5M-het", "1-6+5M-het", "2-6+5M-het", "3-6+5M-het", "4-6+5M-het", "5-6+5M-het", "6-6+5M-het",
                                           "0-6+6M-het", "1-6+6M-het", "2-6+6M-het", "3-6+6M-het", "4-6+6M-het", "5-6+6M-het", "6-6+6M-het"]
 
         found_heterocycles_counter = []
-        found_heterocycles_names = [fragment.name for fragment in generalized_heterocycles]
         for name in generalized_heterocycles_names:
             frag_num = 0
-            for fragment in found_heterocycles_names:
+            for fragment in generalized_heterocycles_found:
                 if fragment.name == name:
                     frag_num += 1
-            found_heterocycles_counter += 1
-        for name in found_heterocycles_names:
-            fragment_names.append(name)
+            found_heterocycles_counter.append(frag_num)
+        for fragment in generalized_heterocycles_found:
+            fragment_names.append(fragment.name)
         for num in found_heterocycles_counter:
             fragments_counter.append(num)
-        for fragment in generalized_heterocycles:
+        for fragment in generalized_heterocycles_found:
             fragments.append(fragment)
-
+    molecule_structure.fragments_list = fragments
     atoms_not_discovered = 0
     for atom in molecule_structure.atom_list:
         if not atom.discovered:
             atoms_not_discovered += 1
-    # cprint(f"atoms not found: {atoms_not_discovered}", "red")
     if atoms_not_discovered > 0:
         # total_frags = 0
         # for lib in fragment_libraries:
         #     total_frags += len(lib)
-        print(molecule_string)
+        cprint(f"atoms not found: {atoms_not_discovered}", "red")
+        cprint(molecule_string, 'red')
         # return ["NA" for _ in range(total_frags)]
     if numeric:
-        return fragments_counter, fragments
+        return fragments_counter, molecule_structure
     else:
-        return fragment_names, fragments
+        return fragment_names, molecule_structure
 
 
-# print(fragmentize(r"n1c2ccccc2ccc1", generalized_heterocycles))
-names, fragments = fragmentize(r"O=C(Nc1cccnc1)c2nnn(Cc3ccccc3)c2C4CCNCC4", biomolecules, peptide_amino_acids, generalized_heterocycles, arenes, functional_groups, hydrocarbons)
-print(names, fragments)
 
-for fragment in fragments:
-    print(fragment.name)
-    for f in fragment.fragment_bonded_to:
-        print(fragment.name)
-    for atom in fragment.atom_list:
-        print(atom.symbol)
+names, molecule = fragmentize(r'CC(C)(C)OC(=O)N[C@](C)(Cc1ccccc1)c2oc(CN3CCNCC3=O)nn2', common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases)
+print(names, molecule)
+print(molecule.mw())
+# num nitrogens
+# num heteroatoms
+# num oxygens
+# mw
+# nitrogens/mw
+# oxygen/mw
+# heteroatom/mw
+# number heterocycles/aromatic
+# heterocycle mw/mw
+# logp
+# TPSA
+# H bond donors/acceptors
+# number of functional groups
+
+
+# for fragment in molecule.fragments_list:
+#     print(fragment.name)
+#     for f in fragment.fragment_bonded_to:
+#         print(fragment.name)
+#     for atom in fragment.atom_list:
+#         print(atom.symbol)
 
 

@@ -12,7 +12,6 @@
 
 '''library of fragments for subgraph searching'''
 
-
 biomolecules = {
     "pyranose": ["OCC1OCC(O)C(O)C1O"],
     "pentose": ["OC1C(O)C(CO)OC1CO"]
@@ -114,14 +113,36 @@ heterocycles = {
     "piperidine": ["C1CCNCC1"],
     }
 
-generalized_heterocycles = {
-    # 'R-group': ['R'],
-    "6+5M-het": ['R+1+R+2+R+R+R+R+R2+R+R1'],
-    "6+6M-het": ['R+1+R+2+R+R+R+R+R2+R+R+R1'],
-    "6M-het": ['R+1+R+R+R+R+R1'],
-    "5M-het": ['R+1+R+R+R+R1'],
+common_aromatic_heterocycles = {
+    "indole": ["N1C2=CC=CC=C2C=C1", "C1(C=CN2)=C2C=CC=C1", "n1c2ccccc2cc1"],
+    "indazole": ["C12=CC=CC=C1C=NN2", "C12=C(C=CC=C2)NN=C1", "c1(cccc2)c2cnn1"],
+    "benzimidazole": ["C12=CC=CC=C1N=CN2", "C12=C(C=CC=C2)NC=N1", "c1(cccc2)c2ncn1"],
+    "benzotriazole": ["C12=CC=CC=C1N=NN2", "C12=C(C=CC=C2)NN=N1", "c1(cccc2)c2nnn1"],
+    "benzofuran": ["C1=C2C(C=CO2)=CC=C1", "C1(C=CO2)=C2C=CC=C1", "c1c2c(cco2)ccc1"],
+    "benzothiophene": ["C1=CC2=CC=CC=C2S1", "C1(C=CS2)=C2C=CC=C1", "c1cc2ccccc2s1"],
+    "benzoxazole": ["C1=NC2=CC=CC=C2O1", "C1(N=CO2)=C2C=CC=C1", "c1nc2ccccc2o1"],
+    "benzothiazole": ["C1=NC2=CC=CC=C2S1", "C1(N=CS2)=C2C=CC=C1", "c1nc2ccccc2s1"],
+    "quinoline": ["C1=C2C(C=CC=N2)=CC=C1", "C1(C=CC=N2)=C2C=CC=C1", "C12=CC=CN=C1C=CC=C2", "c1c2c(cccn2)ccc1"],
+    "isoquinoline": ["C1=CC=C(C=CN=C2)C2=C1", "C1(C=CN=C2)=C2C=CC=C1", "C12=CN=CC=C1C=CC=C2", "c1ccc(ccnc2)c2c1"],
+    "pyrazole": ["N1C=CC=N1", "n1cccn1"],
+    "imidazole": ["C1=NC=CN1", "c1nccn1"],
+    "pyrimidine": ["C1=NC=CC=N1", "c1ncccn1"],
+    "1,2,4-triazole": ["C1=NNC=N1", "C1=NN=CN1", "c1nncn1"],
+    "1,2,3-triazole": ["N1N=NC=C1", "n1nncc1"],
+    "thiophene": ["C1=CC=CS1", "c1cccs1"],
+    "oxazole": ["C1=NC=CO1", "c1ncco1"],
+    "thiazole": ["C1=CN=CS1", "c1cncs1"],
+    "pyridine": ["C1=CC=CC=N1", "c1ccccn1"],
+    "tetrazole": ["C1=NN=NN1", "C1=NNN=N1", "c1nnnn1"],
+    "pyrrole": ["N1C=CC=C1", "n1cccc1"],
+    }
 
-}
+generalized_heterocycles = {
+    "6+5M-het": ['R%1%R%2%R%R%R%R%R2%R%R1'],
+    "6+6M-het": ['R%1%R%2%R%R%R%R%R2%R%R%R1'],
+    "6M-het": ['R%1%R%R%R%R%R1'],
+    "5M-het": ['R%1%R%R%R%R1'],
+    }
 
 
 arenes = {
@@ -134,8 +155,6 @@ arenes = {
 
 functional_groups = {
     "azide": ["NN#N", "N=N=N", "N=N#N"],
-    "tetrahydropyran": ["C1CCCCO1"],
-    "tetrahydrofuran": ["C1CCCO1"],
     "cyclohexanone": ["O=C1CCCCC1"],
     "cyclohexenone": ["O=C1C=CCCC1"],
     "isocyanate": ["N=C=O"],
@@ -147,8 +166,7 @@ functional_groups = {
     "1,3-dioxolane": ["C1OCCO1"],
     "Urea": ["O=C(N)N"],
     "Thiourea": ["S=C(N)N"],
-    "carbamate": ["O=C(N)O"],
-    "carbamyl": ["O=C({N})O"],
+    "carbamate": ["O=C(N)O", "O=C({N})O", "O=C({n})O"],
     "Cyano": ["C#N"],
     "trifluoromethyl(aryl)": ["C(F)(F)(F){c}"],
     "trifluoromethyl": ["C(F)(F)F"],
@@ -164,9 +182,8 @@ functional_groups = {
     "carboxylic acid(aryl)": ["O=C({c})OW", "O=C({C1=CC=CC=C1})OW"],
     "carboxylic acid": ["O=C({C})OW"],
     "acetoxy": ["WCC(OX)=O"],
-    "methyl ester": ["O=C({C})OCW", "O=C({c})OCW"],
-    "ethyl ester": ["O=C({C})OC(X)CW", "O=C({c})OC(X)CW"],
     "ester": ["O=C({C})OX", "O=C({c})OX"],
+    "guanidine": ["N=C(N)N", r"N=C(/N)\N", r"N=C(\N)/N"],
     "thioamide": ["NC(=S)Y"],
     "formamide": ["NC(=O)X"],
     "primary amide": ["WNC(=O)Y"],
@@ -181,8 +198,7 @@ functional_groups = {
     "thiol": ["SW"],
     "disulfide": ["SS"],
     "thioether": ["SX"],
-    "guanidine": ["N=C(N)N"],
-    "amidine": ["N=CN"],
+    "amidine": ["N=CN", "N=C/N", r"N=C\N"],
     "imine": ["N=C"],
     "epoxide": ["C1OC1"],
     "enone": ["C=CC=O"],
@@ -190,6 +206,8 @@ functional_groups = {
     "aldehyde": ["O=C(X){C}", "O=C(X){c}"],
     "ketone(aryl)": ["O=C({c}){C}", "O=C({c}){c}", "O=C({C}){C1=CC=CC=C1}"],
     "ketone": ["O=C({C}){C}"],
+    "acyl": ['C(=O)OX'],
+    "ketyl": ['C=O'],
     "methoxy": ["WCOX"],
     "ether(aryl)": ["XO{C1=CC=CC=C1}", "XO{c}"],
     "ether": ["OX"],
@@ -197,8 +215,7 @@ functional_groups = {
     "hydroxyl": ["WO({C})"],
     "oxo": ["O"],
     "diazo": ["N=N"],
-    "dimethylamine": ["WCNCW"],
-    "diethylamine": ["WC(CY)N(CY)CW"],
+    "piperazine": ["N1CCNCC1"],
     "amine(aryl)": ["N{C1=CC=CC=C1}", "N{c}"],
     "primary amine": ["NW"],
     "secondary amine": ["NX"],
@@ -254,11 +271,31 @@ hydrocarbons = {
     }
 
 
-Aromatic_Fragments = {
-    "1,3-cyclohexadiene": ["C1C=CC=CC1"],
+aromatic_fragments = {
+    "amine aromatic chain": ["cccn", "ccnc", "ccn", "cnc", "nc", "n"],
+    "oxygen aromatic chain": ["ccco", "ccoc", "cco", "coc", "oc", "o"],
+    "sulfur aromatic chain": ["cccs", "ccsc", "ccs", "csc", "sc", "s"],
+    "aromatic carbon chain": ["ccccc", "cccc", "ccc", "cc", "c"],
     }
 
 
-
+special_cases = {
+    "quaternary ammonium": ["NZ", "N({C})({C})({C})({C})"],
+    'Phosphorus': ['P', 'p'],
+    'Silicon': ['Si'],
+    'keto R-group': ['R{C(C)=O}'],
+    'amide C-R-group': ['R{C(N)=O}'],
+    'amide N-R-group': ['R{N(C=O)}'],
+    'ester C-R-group': ['R{C(O)=O}'],
+    'ester O-R-group': ['R{O(C)=O}'],
+    'acyl R-group': ['R{C=O}'],
+    'aromatic c-R-group': ['R{c}'],
+    'aromatic n-R-group': ['R{n}'],
+    'aliphatic c-R-group': ['R{C}'],
+    'aliphatic N-RR-group': ['R{N}R'],
+    'aliphatic N-R-group': ['R{N}'],
+    'aliphatic O-R-group': ['R{O}'],
+    'other R-group': ['R']
+}
 
 

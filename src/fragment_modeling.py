@@ -11,8 +11,8 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 from find_fragments import fragmentize
-from fragments_library import generalized_heterocycles, biomolecules, peptide_amino_acids, heterocycles, arenes, functional_groups, hydrocarbons
-
+from fragments_library import special_cases, biomolecules, peptide_amino_acids, heterocycles, \
+    common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments
 
 df = pd.read_csv('../data/merck_data_combined.csv')
 
@@ -28,4 +28,7 @@ smiles_data = X['Canonical_Smiles']
 
 
 for molecule in smiles_data:
-    fragmentize(molecule, biomolecules, peptide_amino_acids, heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons)
+    frag = fragmentize(molecule, common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases)[0]
+    if 'oxo' in frag:
+        print(molecule)
+        print(frag)

@@ -135,6 +135,10 @@ common_aromatic_heterocycles = {
     "pyridine": ["C1=CC=CC=N1", "c1ccccn1"],
     "tetrazole": ["C1=NN=NN1", "C1=NNN=N1", "c1nnnn1"],
     "pyrrole": ["N1C=CC=C1", "n1cccc1"],
+    "piperazine": ["N1CCNCC1"],  # TODO @@@@@@@@@@@@@@@@@@
+    "pyrrolidine": ["N1CCCC1"],
+    "pyrazolidine": ["N1NCCC1"],
+    "piperidine": ["C1CCNCC1"],
     }
 
 generalized_heterocycles = {
@@ -199,7 +203,7 @@ functional_groups = {
     "disulfide": ["SS"],
     "thioether": ["SX"],
     "amidine": ["N=CN", "N=C/N", r"N=C\N"],
-    "imine": ["N=C"],
+    "imine": ["N=C", "N={C}"],  # TODO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2
     "epoxide": ["C1OC1"],
     "enone": ["C=CC=O"],
     "enol": ["C=COW"],
@@ -215,7 +219,6 @@ functional_groups = {
     "hydroxyl": ["WO({C})"],
     "oxo": ["O"],
     "diazo": ["N=N"],
-    "piperazine": ["N1CCNCC1"],
     "amine(aryl)": ["N{C1=CC=CC=C1}", "N{c}"],
     "primary amine": ["NW"],
     "secondary amine": ["NX"],

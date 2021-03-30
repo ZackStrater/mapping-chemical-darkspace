@@ -588,7 +588,8 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False, verbose=Fal
 
 
 libraries = [common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases]
-names, molecule = fragmentize(r'CC(C)(C)OC(=O)N[C@](C)(Cc1ccccc1)c2oc(CN3CCNCC3=O)nn2', *libraries, numeric=True)
+names, molecule = fragmentize(r'C1CNCCC1c2ccccc2', *libraries)
+
 print(len(names))
 print(names)
 # print(names, molecule)

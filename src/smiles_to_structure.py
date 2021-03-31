@@ -34,6 +34,15 @@ class MoleculeStructure:
         self.atom_list = []
         self.fragments_list = []
 
+    def assign_fragment_neighbors(self):
+        for fragment in self.fragments_list:
+            fragment.assign_fragment_atoms()
+        for fragment in self.fragments_list:
+            for atom in fragment.atom_list:
+                for bond in atom.bonded_to:
+                    if bond.atom.fragment != fragment and bond.atom.fragment not in fragment.fragment_bonded_to: # TODO
+                        fragment.fragment_bonded_to.append(bond.atom.fragment)
+
     def H_atoms(self):
         expected_bonds_dict = {
             "N": 3, "O": 2, "P": 3, "Si": 4, "S": 2, "C": 4, "B": 3,
@@ -108,11 +117,6 @@ class Fragment(MoleculeStructure):
         self.name = name
         self.atom_list = atom_list
         self.fragment_bonded_to = []
-        # for atom in self.atom_list: TODO this needs to be a new function on the moleculerstructure class
-        #     atom.fragment = self
-        #     for bond in atom.bonded_to:
-        #         if bond.atom.fragment != self:
-        #             self.fragment_bonded_to.append(bond.atom.fragment)
 
     def generalize_heterocycle_name(self):
         heteroatoms = 0
@@ -120,6 +124,11 @@ class Fragment(MoleculeStructure):
             if atom.heteroatom:
                 heteroatoms += 1
         self.name = f'{heteroatoms}-' + self.name
+
+    def assign_fragment_atoms(self):
+        for atom in self.atom_list:
+            atom.fragment = self
+
 
 bond_encoder = {
     "=": 2,  # double bond

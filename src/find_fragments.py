@@ -256,7 +256,7 @@ def find_fragment(fragment_string, molecule_string, fragment_name, structure=Non
     expand_map(anchored_fragment_map)
 
     def check_anchor_atom(potential_anchor_atom, fragment_map):
-        molecule_atoms = {potential_anchor_atom}  # TODO is this not needed? just use currently visited???
+        molecule_atoms = {potential_anchor_atom}
         # list to keep track of which atoms in the molecule constitute a matched fragment
 
         currently_visited = {potential_anchor_atom: fragment_map}
@@ -324,7 +324,7 @@ def find_fragment(fragment_string, molecule_string, fragment_name, structure=Non
                     branch_atoms.update(branch_point_atoms)
                 else:
                     molecule_atoms.update(branch_point_atoms)
-                    # first branch point does not have a branch that spawned it @
+                    # first branch point does not have a branch that spawned it
                 return True
                 # if all branches have been found, they will be True in branch_check, branch point is a match, return True
             else:
@@ -467,7 +467,8 @@ def find_fragment(fragment_string, molecule_string, fragment_name, structure=Non
 
             # running checks
             verbose_bin.append(f"number of atoms in fragment: {len(molecule_atoms)}")
-            verbose_bin.append(f"number of atoms in currently_visited {len(currently_visited)}")
+            molecule_atoms2 = [atom.symbol for atom in molecule_atoms]
+            molecule_atoms2phantom = [atom.phantom_atom for atom in molecule_atoms]
             if (len(molecule_atoms)) != len(currently_visited):
                 verbose_bin.append("error in number of atoms found")
             for atom in molecule_atoms:
@@ -477,7 +478,7 @@ def find_fragment(fragment_string, molecule_string, fragment_name, structure=Non
             for atom in molecule_atoms:
                 verbose_bin.append(atom.symbol)
             verbose_bin.append("matched fragment to anchor atom")
-            return Fragment(fragment_name, list(molecule_atoms)) # TODO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            return Fragment(fragment_name, list(molecule_atoms)) # TODO currently this includes atoms that were found via phantom atoms (unclear if this is wanted behavior)
         else:
             verbose_bin.append("anchor atom not matched to fragment")
             return False
@@ -588,32 +589,18 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False, verbose=Fal
 
 
 libraries = [common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases]
-names, molecule = fragmentize(r'C1CNCCC1c2ccccc2', *libraries)
+names, molecule = fragmentize(r'[R]\N=C/1\NC2(CCCNC2)C(=O)N1[R]', *libraries)
 
-print(len(names))
 print(names)
-# print(names, molecule)
-# print(molecule.mw())
-# num nitrogens
-# num heteroatoms
-# num oxygens
-# mw
-# nitrogens/mw
-# oxygen/mw
-# heteroatom/mw
-# number heterocycles/aromatic
-# heterocycle mw/mw
-# logp
-# TPSA
-# H bond donors/acceptors
-# number of functional groups
+molecule.assign_fragment_neighbors()
 
 
-# for fragment in molecule.fragments_list:
-#     print(fragment.name)
-#     for f in fragment.fragment_bonded_to:
-#         print(fragment.name)
-#     for atom in fragment.atom_list:
-#         print(atom.symbol)
 
+for fragment in molecule.fragments_list:
+    for atom in fragment.atom_list:
+        print(atom.symbol, fragment.name)
+for fragment in molecule.fragments_list:
+    cprint(fragment.name, 'blue')
+    for f in fragment.fragment_bonded_to:
+        cprint(f.name, 'red')
 

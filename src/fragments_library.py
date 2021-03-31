@@ -144,11 +144,6 @@ generalized_heterocycles = {
     "5M-het": ['R%1%R%R%R%R1'],
     }
 
-secondary_amines = {
-    "piperazine": ["N1CCNCC1"],
-    "pyrrolidine": ["N1CCCC1"],
-    "pyrazolidine": ["N1NCCC1"],
-    "piperidine": ["C1CCNCC1"]}
 
 arenes = {
     "anthracene": ["C12=CC=CC=C1C=C3C(C=CC=C3)=C2", "C1(C=C(C=CC=C2)C2=C3)=C3C=CC=C1", "c12ccccc1cc3c(cccc3)c2"],
@@ -160,6 +155,8 @@ arenes = {
 
 functional_groups = {
     "azide": ["NN#N", "N=N=N", "N=N#N"],
+    "piperazine": ["N1CCNCC1"],
+    "morpholine": ["N1CCOCC1"],
     "cyclohexanone": ["O=C1CCCCC1"],
     "cyclohexenone": ["O=C1C=CCCC1"],
     "isocyanate": ["N=C=O"],
@@ -204,7 +201,7 @@ functional_groups = {
     "disulfide": ["SS"],
     "thioether": ["SX"],
     "amidine": ["N=CN", "N=C/N", r"N=C\N"],
-    "imine": ["N=C", "N={C}"],  # TODO @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2
+    "imine": ["N=C", "N={C}"],
     "epoxide": ["C1OC1"],
     "enone": ["C=CC=O"],
     "enol": ["C=COW"],
@@ -220,6 +217,9 @@ functional_groups = {
     "hydroxyl": ["WO({C})"],
     "oxo": ["O"],
     "diazo": ["N=N"],
+    "pyrrolidine": ["N1CCCC1"],
+    "pyrazolidine": ["N1NCCC1"],
+    "piperidine": ["C1CCNCC1"],
     "amine(aryl)": ["N{C1=CC=CC=C1}", "N{c}"],
     "primary amine": ["NW"],
     "secondary amine": ["NX"],

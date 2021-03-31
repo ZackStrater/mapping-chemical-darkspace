@@ -10,7 +10,7 @@ pd.set_option('display.width', 1000)
 df = pd.read_csv('../data/merck_data_combined.csv')
 
 df = df.loc[:, ['bromide or amine', 'Canonical_Smiles', 'MALDI Product Intensity', 'MALDI Internal Standard Intensity', 'EIC(+)[M+H] Product Area', 'Cu_cat', 'Ir_cat', 'Pd_cat', 'Ru_cat',
-                'TPSA', 'cLogP', '# H-bond Acceptors', '# H-bond Donors']]
+                'TPSA', 'cLogP', '# H-bond Acceptors', '# H-bond Donors']] # add hinderance other important columns
 bromide_mask = df['bromide or amine'] == 'bromide'
 amine_mask = df['bromide or amine'] == 'amine'
 
@@ -112,6 +112,18 @@ def add_molecule_metadata(smiles_string):
     num_heteratoms_per_atom, num_carbons_per_atom]
 
     return pd.Series(output)
+
+def get_coupling_fragments(amine_smiles_string, bromide_smiles_string):
+    amine = fragmentize(amine_smiles_string, *libraries)[1]
+    bromide = fragmentize(amine_smiles_string, *libraries)[1]
+    amine_fragment_names = ["piperazine", "morpholine", "pyrrolidine", "pyrazolidine", "piperidine", "amine(aryl)", "primary amine", "secondary amine"]
+    bromide_fragment_names = []
+    # get het and get amine
+    # add arylamines mb
+    # get 2d adjacency matrix
+
+
+
 
 
 print(df)

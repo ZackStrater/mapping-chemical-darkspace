@@ -106,9 +106,9 @@ for i in range(len(data)):
     X = df_cat.copy()
     grid = {
             'learning_rate': [0.01],
-            'n_estimators': [1000],
-            'subsample': [0.3, 0.4, 0.5, 0.6],  # 0 to 1
-            'max_depth': [3, 6, 8],  # 0 to infinite
+            'n_estimators': [250, 500, 750, 1000],
+            'subsample': [0.4],  # 0 to 1
+            'max_depth': [6],  # 0 to infinite
             # 'colsample_bytree': [0.8, 0.9, 1],
             # 'colsample_bylevel': [0.8, 0.9, 1],
             # 'colsample_bynode': [0.8, 0.9, 1],

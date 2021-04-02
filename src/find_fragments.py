@@ -556,20 +556,6 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False, verbose=Fal
     for key in generalized_heterocycles_found_dict:
         fragments_counter.append(generalized_heterocycles_found_dict[key])
 
-    # found_heterocycles_counter = []
-    # for name in generalized_heterocycles_names:
-    #     frag_num = 0
-    #     for fragment in generalized_heterocycles_found:
-    #         if fragment.name == name:
-    #             frag_num += 1
-    #     found_heterocycles_counter.append(frag_num)
-    # for fragment in generalized_heterocycles_found:
-    #     fragment_names.append(fragment.name)
-    # for num in found_heterocycles_counter:
-    #     fragments_counter.append(num)
-    # for fragment in generalized_heterocycles_found:
-    #     fragments.append(fragment)
-
     molecule_structure.fragments_list = fragments
     atoms_not_discovered = 0
     for atom in molecule_structure.atom_list:
@@ -588,19 +574,21 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False, verbose=Fal
         return fragment_names, molecule_structure
 
 
-libraries = [common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases]
-names, molecule = fragmentize(r'[R]\N=C/1\NC2(CCCNC2)C(=O)N1[R]', *libraries)
+# libraries = [common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases]
+# names, molecule = fragmentize(r'BrC1=CNC(=O)C=C1', *libraries)
+#
+# print(names)
+# molecule.assign_fragment_neighbors()
+#
+#
+#
+# for fragment in molecule.fragments_list:
+#     for atom in fragment.atom_list:
+#         print(atom.symbol, fragment.name)
+# for fragment in molecule.fragments_list:
+#     cprint(fragment.name, 'blue')
+#     for f in fragment.fragment_bonded_to:
+#         cprint(f.name, 'red')
+# # #
 
-print(names)
-molecule.assign_fragment_neighbors()
-
-
-
-for fragment in molecule.fragments_list:
-    for atom in fragment.atom_list:
-        print(atom.symbol, fragment.name)
-for fragment in molecule.fragments_list:
-    cprint(fragment.name, 'blue')
-    for f in fragment.fragment_bonded_to:
-        cprint(f.name, 'red')
 

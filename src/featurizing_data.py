@@ -8,7 +8,7 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 df = pd.read_csv('../data/merck_data_combined.csv')
-df['normalized MALDI'] = df['MALDI Product Intensity']/df['MALDI Internal Standard Intensity']
+df['normalized MALDI'] = df['MALDI Product Intensity']/df['MALDI Internal Standard Intensity'] # TODO this is redundant (already in csv)
 
 df = df.loc[:, ['bromide or amine', 'Canonical_Smiles', 'MALDI Product Intensity', 'MALDI Internal Standard Intensity',
                 'normalized MALDI', 'EIC(+)[M+H] Product Area', 'Cu_cat', 'Ir_cat', 'Pd_cat', 'Ru_cat',
@@ -210,7 +210,9 @@ R_mask = df['Canonical_Smiles'].str.contains('[R]')
 print(df.shape)
 df = df[~R_mask] # remove rows where molecules have obscured groups
 
-df.drop(['bromide or amine', 'Canonical_Smiles', 'amine_string', 'bromide_string'], axis=1, inplace=True)
+df.drop(['bromide or amine', 'Canonical_Smiles'], axis=1, inplace=True)
+# df.drop(['amine_string', 'bromide_string'], axis=1, inplace=True)
+
 
 print(df.shape)
 df.to_csv('../data/featurized_data.csv', index=False)

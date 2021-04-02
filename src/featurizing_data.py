@@ -8,9 +8,12 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 df = pd.read_csv('../data/merck_data_combined.csv')
+df['normalized MALDI'] = df['MALDI Product Intensity']/df['MALDI Internal Standard Intensity']
 
-df = df.loc[:, ['bromide or amine', 'Canonical_Smiles', 'MALDI Product Intensity', 'MALDI Internal Standard Intensity', 'EIC(+)[M+H] Product Area', 'Cu_cat', 'Ir_cat', 'Pd_cat', 'Ru_cat',
-                'TPSA', 'cLogP', '# H-bond Acceptors', '# H-bond Donors', 'Rotatable bonds', 'Hinderance', 'Hinderance, binding', 'Hinderance, non binding',]] # add hinderance other important columns
+df = df.loc[:, ['bromide or amine', 'Canonical_Smiles', 'MALDI Product Intensity', 'MALDI Internal Standard Intensity',
+                'normalized MALDI', 'EIC(+)[M+H] Product Area', 'Cu_cat', 'Ir_cat', 'Pd_cat', 'Ru_cat',
+                'TPSA', 'cLogP', '# H-bond Acceptors', '# H-bond Donors', 'Rotatable bonds', 'Hinderance',
+                'Hinderance, binding', 'Hinderance, non binding',]]
 bromide_mask = df['bromide or amine'] == 'bromide'
 amine_mask = df['bromide or amine'] == 'amine'
 
@@ -196,15 +199,20 @@ bromide_het_neighbor_framgent_column_names = ['bromide_het_neighbor_' + name for
 get_coupling_fragments_and_neighbors_column_names = amine_coupling_fragment_column_names + amine_neighbor_fragment_column_names + bromide_het_coupling_fragment_column_names + bromide_het_neighbor_framgent_column_names
 
 print(df)
-df[amine_feature_column_names] = df['amine_string'].apply(lambda x: featurize_molecules(x))
 df[amine_metadata_column_names] = df['amine_string'].apply(lambda x: add_molecule_metadata(x))
-df[bromide_feature_column_names] = df['bromide_string'].apply(lambda x: featurize_molecules(x))
 df[bromide_metadata_column_names] = df['bromide_string'].apply(lambda x: add_molecule_metadata(x))
+df[amine_feature_column_names] = df['amine_string'].apply(lambda x: featurize_molecules(x))
+df[bromide_feature_column_names] = df['bromide_string'].apply(lambda x: featurize_molecules(x))
 df[get_coupling_fragments_and_neighbors_column_names] = df.apply(lambda x: get_coupling_fragments_and_neighbors(x['amine_string'], x['bromide_string']), axis=1)
 
 
+R_mask = df['Canonical_Smiles'].str.contains('[R]')
+print(df.shape)
+df = df[~R_mask] # remove rows where molecules have obscured groups
+
 df.drop(['bromide or amine', 'Canonical_Smiles', 'amine_string', 'bromide_string'], axis=1, inplace=True)
-print(df)
+
+print(df.shape)
 df.to_csv('../data/featurized_data.csv', index=False)
 
 

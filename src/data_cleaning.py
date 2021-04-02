@@ -8,18 +8,6 @@ pd.set_option('display.width', 1000)
 
 xls = pd.ExcelFile('../data/merck_data.xlsx')
 df = pd.read_excel(xls, sheet_name=1)
-df_compare = df[['Ru Normalized MALDI Pdt/IS', 'Pd Normalized MALDI Pdt/IS', 'Ir Normalized MALDI Pdt/IS',
-                 'Cu Normalized MALDI Pdt/IS', 'Ru EIC(+)[M+H] Product Area', 'Pd EIC(+)[M+H] Product Area',
-                 'Ir EIC(+)[M+H] Product Area', 'Cu EIC(+)[M+H] Product Area']]
-
-def rank(m1, m2, m3 , m4):
-    array = np.array([m1, m2, m3, m4])
-    sorted = np.argsort(array)
-    return pd.Series(sorted)
-df_compare[['a', 'b', 'c', 'd']] = df_compare.apply(lambda x: rank(x['Ru Normalized MALDI Pdt/IS'], x['Pd Normalized MALDI Pdt/IS'], x['Ir Normalized MALDI Pdt/IS'], x['Cu Normalized MALDI Pdt/IS']), axis=1)
-df_compare[['aa', 'bb', 'cc', 'dd']] = df_compare.apply(lambda x: rank(x['Ru EIC(+)[M+H] Product Area'], x['Pd EIC(+)[M+H] Product Area'], x['Ir EIC(+)[M+H] Product Area'], x['Cu EIC(+)[M+H] Product Area']), axis=1)
-
-df_compare.to_csv('../data/compare.csv', index=False)
 
 # EDA visualization
 
@@ -52,12 +40,13 @@ ax.legend()
 
 MALDI_EIC, ax2 = plt.subplots()
 ax2.scatter(Ru_MALDI, Ru_EIC, label='Ru', alpha=0.5, s=20)
-ax2.scatter(Pd_MALDI, Pd_EIC, label='Ru', alpha=0.5, s=20)
+ax2.scatter(Pd_MALDI, Pd_EIC, label='Pd', alpha=0.5, s=20)
 ax2.scatter(Ir_MALDI, Ir_EIC, label='Ir', alpha=0.5, s=20)
 ax2.scatter(Cu_MALDI, Cu_EIC, label='Cu', alpha=0.5, s=20)
 ax2.set_xlabel('MALDI Product Response', size=15)
 ax2.set_ylabel('UPLC-MS EIC-product area', size=15)
 ax2.set_title('MALDI Output vs UPLC EIC', size=20)
+#ax2.plot([0, 1], [0, 1], transform=ax.transAxes, color='black', ls='--', alpha=0.5)
 ax2.legend()
 plt.show()
 

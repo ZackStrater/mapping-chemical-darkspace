@@ -1,7 +1,8 @@
-from smiles_to_structure import convert_to_structure, MoleculeStructure, Fragment
+
+from src.smiles_to_structure import convert_to_structure, MoleculeStructure, Fragment
 from collections import Counter
 from termcolor import cprint
-from fragments_library import special_cases, biomolecules, peptide_amino_acids, heterocycles, \
+from src.fragments_library import special_cases, biomolecules, peptide_amino_acids, heterocycles, \
     common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments
 
 
@@ -579,7 +580,7 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False, verbose=Fal
 #
 # print(names)
 # molecule.assign_fragment_neighbors()
-#
+
 #
 #
 # for fragment in molecule.fragments_list:

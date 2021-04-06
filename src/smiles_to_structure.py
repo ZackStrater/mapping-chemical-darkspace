@@ -1,4 +1,4 @@
-from structure_to_smiles import convert_to_smiles
+from src.structure_to_smiles import convert_to_smiles
 import re
 
 

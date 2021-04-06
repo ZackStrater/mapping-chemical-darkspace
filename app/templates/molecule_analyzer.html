@@ -1,0 +1,70 @@
+
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Molecule Analyzer</title>
+  <meta name="description" content="Molecule Analyzer">
+  <meta name="author" content="Zack Strater">
+  <script src="{{ url_for('static', filename='brython.js')}}"></script>
+  <script src="{{ url_for('static', filename='brython_stdlib.js')}}"></script>
+
+</head>
+
+<body onload="brython()">
+
+    <h1>Molecule Analyzer</h1>
+    <p>this app will tell you what fragments are inside a molecule</p>
+    <p>enter a valid smiles string below</p>
+
+    <div>
+        <!-- These have id's so that later we can pull out data using js. -->
+        <span>a:</span> <input id="a"></input>
+
+    </div>
+
+    <div>
+        <button type="button" id="get_fragments">get fragments!</button>
+    </div>
+
+    <div>
+        <!-- The span has an id so that later we can fill in the solution
+             using js. -->
+        <p> Fragments: <span id="molecule_fragments"></span> </p>
+
+
+<script type="text/python">
+
+from browser import document, ajax
+import json
+
+def get_input_string():
+    a = document['a'].value
+    return {'a': str(a)}
+
+def display_fragments(req):
+    result = json.loads(req.text)
+    # note the syntax for setting the child text of an element
+    document['molecule_fragments'].html = f"{result['root_1']}"
+
+def send_input_string_json(input_string):
+    req = ajax.Ajax()
+    req.bind('complete', display_fragments)
+    req.open('POST',
+                '/get_fragments',
+                True)
+    req.set_header('Content-Type', 'application/json')
+    req.send(json.dumps(input_string))
+
+def click(event):
+    input_string = get_input_string()
+    send_input_string_json(input_string)
+
+document['get_fragments'].bind('click', click)
+
+</script>
+
+</body>
+</html>
+

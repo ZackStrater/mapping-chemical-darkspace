@@ -6,10 +6,6 @@ from src.fragments_library import special_cases, biomolecules, peptide_amino_aci
     common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments
 
 libraries = [heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases]
-names, molecule = fragmentize(r'IC1=CNC(=O)C=C1', *libraries)
-print(names)
-
-
 
 
 from flask import Flask, render_template, request, jsonify
@@ -23,13 +19,9 @@ def index():
 @app.route('/get_fragments', methods=['POST'])
 def get_fragments():
     user_data = request.json
-    a = user_data['a']
-    root_1 = _solve_quadratic(a)
-    return jsonify({'root_1': root_1})
-
-
-def _solve_quadratic(a):
-    return 'molecule' + a
+    input_string = user_data['input_string']
+    fragments, molecule = fragmentize(input_string, *libraries)
+    return jsonify({'fragments': fragments})
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@
 
     <div>
         <!-- These have id's so that later we can pull out data using js. -->
-        <span>a:</span> <input id="a"></input>
+        <span>SMILES string:</span> <input id="input_string"></input>
 
     </div>
 
@@ -40,13 +40,13 @@ from browser import document, ajax
 import json
 
 def get_input_string():
-    a = document['a'].value
-    return {'a': str(a)}
+    input_string = document['input_string'].value
+    return {'input_string': str(input_string)}
 
 def display_fragments(req):
     result = json.loads(req.text)
     # note the syntax for setting the child text of an element
-    document['molecule_fragments'].html = f"{result['root_1']}"
+    document['molecule_fragments'].html = f"{result['fragments']}"
 
 def send_input_string_json(input_string):
     req = ajax.Ajax()

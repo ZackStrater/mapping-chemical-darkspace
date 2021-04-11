@@ -12,6 +12,11 @@ Chemical darkspace is a concept that refers to the set of all molecules where a 
 ![](images/chemical_darkspace.png)
 This chemical darkspace is incredibly important for our ability to make advancements in any 
 
+
+![](images/Lead_optimization.png)
+
+
+
 ## High-Troughput Experimentation and MALDI
 
 ![](images/reaction_automation.png)

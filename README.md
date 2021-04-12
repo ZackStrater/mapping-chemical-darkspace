@@ -74,9 +74,9 @@ This discrepancy is also mirrored in the relative feature importances (calculate
 <p align="center">
 	<img src="images/RF_feature_importances.png">
 </p>
-Because the dataset is so small (~400 reactions per catalyst), these features are not represented widely enough to be effectively used in the model.  Instead, it seems the model prefers to utilize the more generalizable features included in the molecule metadata.  If more reaction data were available and therefore more examples of each type of fragment, these fragment analysis features would theoretically  be utilized to a greater extent by the model and  presumably create a more accurate model because they convey more accurate chemical information about each molecule compared to the more generalized molecule metadata features.  There is also a lingering question...  
+Because the dataset is so small (~400 reactions per catalyst), these features are not represented widely enough to be effectively used in the model.  Instead, it seems the model prefers to utilize the more generalizable features included in the molecule metadata.  If more reaction data were available and therefore more examples of each type of fragment, these fragment analysis features would theoretically  be utilized to a greater extent by the model and  presumably create a more accurate model because they convey more accurate chemical information about each molecule compared to the more generalized molecule metadata features. 
 <p align="center">
-	<img src="chemical_RF_predictions_vs_EIC.png">
+	<img src="RF_predictions_vs_EIC.png">
 </p>
 Additionally, a small gain was achieved by removing data points that included ambiguous structures (~40 structures).  These are structures where part of the molecule is obscured  and represented simply with an “R” group for proprietary reasons.  These groups could be as simple as a single carbon or could represent significant portions of the molecule and therefore their inclusion most likely leads the model to make more conservative predictions.
 

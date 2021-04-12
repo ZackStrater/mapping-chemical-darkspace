@@ -25,9 +25,11 @@ Unfortunately, even the most used and most robust reactions can fail in these si
 
 ## High-Troughput Experimentation and MALDI
 Advances in automation and robotics have significantly increased researchers ability to run greater volumes of reactions simultaneously.  Shown below is equipment enabling 1536 reactions to be run in seperate tiny wells in a glass plate.  
+<p align="center">
+	<img src="images/reaction_automation.png">
+	<img src="images/1536_well_plate.png">
+</p>
 
-![](images/reaction_automation.png)
-![](images/1536_well_plate.png)
 
 This technique has allowed researchers to quickly explore and "map" areas of reactivity that are important to medicinal chemists.  One problem with this technique is that while the reactions can be run in parallel, they are still typically analyzed in series (i.e. one at a time).  Analysis of the reactions tends to be the major bottleneck in this process, with each product having to be physically separated from the rest of the reaction using a technique called chromatography.  The instruments that carry out this process, referred to either as HPLC or UPLC, can take several minutes to analyze a single sample, which can lead to prohibitively lengthy analysis times.  One promising solution to slow analysis is a technique called MALDI (Matrix-Assisted Laser Desorption/Ionization), a technique that uses laser ablation on a dried sample of the reaction to .  These instruments can offer up to 300x speed increase over traditional chromatographic methods, which would allow researchers to significantly speed up the slowest segment of the HTE process.  One complciation is that MALDI is much less accurate than traditional chromatrographic methods in terms of giving an estimate of the yield of the reaction.  This Inaccuracy stems from the fact that different molecules can ionize to different degrees under the MALDI laser based on the particular chemical structures that are present.  The goal of this project is to be able to map the output from MALDI to that of tradiotional, more accurate approaches
 IF the output of MALDI analysis could be effectively mapped ontothe output of traditional chromatographic methods   

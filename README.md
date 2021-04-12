@@ -27,6 +27,7 @@ This technique has allowed researchers to quickly explore and effectively "map" 
 <p align="center">
 	<img src="images/MALDI_TOF.png">
 </p>
+
 ## Data
 The data for this project was available in the supplementary information in the publication by Lin *et al*, which screened C-N couplings between secondary amines and heteorocyclic bromides (see reaction scheme below)<sup>1</sup>.  
 <p align="center">
@@ -72,3 +73,5 @@ Additionally, a small gain was achieved by removing data points that included am
 
 ## Conclusion
 The sum total of the improvements to the models led to > 0.7 R<sup>2</sup> value for each catalyst type with an average R<sup>2</sup> value of 0.77.  The final models showed marked improvement compared to just using a line of best fit with the raw MALDI data (R<sup>2</sup> = 0.48) and just using MALDI output in a random forest model (avg R<sup>2</sup> = 0.63).  It should be noted that there are control studies within the cited paper which suggest that the overall process of running the reactions in small wells, measuring the MALDI output, and measuring the UPLC-EIC results in some experimental error.  This error was approximated by dosing the wells with a known amount of a deuterated product standard, which is the best experimental way of reducing experimental error.  This approach yielded a 0.85 R<sup>2</sup> value, which one can treat as a theoretical maximum accuracy due to experimental error for this high-throughput approach.  In this light, we can see that the modeling done in this project is approaching the usefulness of using a known product standard.  This represents a significant achievement, because having a known product standard for every single reaction is untenable due to the time it would take to isolate and characterize thousands of product standards.  Ultimately, this project should be seen as a proof of concept that modeling using a mix of chemical feature and MALDI output can successfully predict the outcome of a reaction.  
+
+1. Lin, S.; Dikler, S.; Blincoe, W. D.; Ferguson, R. D.; Sheridan, R. P.; Peng, Z.; Conway, D. V.; Zawatzky, K.; Wang, H.; Cernak, T.; Davies, I. W.; DiRocco, D. A.; Sheng, H.; Welch, C. J.; Dreher, S. D. Mapping the dark space of chemical reactions with extended nanomole synthesis and MALDI-TOF MS. https://science.sciencemag.org/content/361/6402/eaar6236 

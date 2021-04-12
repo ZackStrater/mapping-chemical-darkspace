@@ -11,12 +11,10 @@ Chemical darkspace, coined in a 2018 publication in Science<sup>1</sup> by Lin *
 <p align="center">
 	<img src="images/chemical_darkspace.png">
 </p>
-
 Understanding the countours of chemical darkspace is incredibly important for our ability to make advancements in scientific fields that use chemical reactions (hint: that's basically all of them).  Among the research fields that rely on exploring chemical darkspace, chief among them is drug development.  Nearly all new small molecule drugs exist somewhere in chemical darkspace.  It is the job of medicinal chemists to take an initial "hit" or "lead" compound, one that has shown promising pharmacological activity against a biological target, and optimize the medicinal qualities (i.e. reducing toxicity, increasing bioavailability) of that drug by exploring the darkspace around it.  
 <p align="center">
 	<img src="images/Lead_optimization.png">
 </p>
-
 Unfortunately, even the most used and most robust reactions can fail in these situations.  One example is C-N coupling reactions, which will be the focus of this project.  In the study by Lin *et al*, these reactions were reported to have a %35 failure across 10,000 examples in the electronic notebooks of Merck's researchers<sup>1</sup>.  Reaction failure can significantly hamper drug development by creating complications in accessing certain structures.  When researchers meet these stumbling blocks they must manually explore these reactions to figure out what went wrong, or abandon the prospects of those potentially useful structures.  This process is time consuming, very costly, and can lead to slowdowns in drug development or even abandonment of a drug campaign.  One way pharmaceutical companies are tackling this issue is by investing in programs to explore vast swaths of chemical darkspace either ahead of time or on-demand using thousands of miniaturized and parallel reactions in a process known as high-throughput experimentation (HTE).
 
 ## High-Troughput Experimentation and MALDI
@@ -25,24 +23,19 @@ Advances in automation and robotics have significantly increased researchers abi
 	<img src="images/reaction_automation.png">
 	<img src="images/1536_well_plate.png">
 </p>
-
-
 This technique has allowed researchers to quickly explore and effectively "map" areas of reactivity that are important to medicinal chemists.  One problem with this technique is that while the reactions can be run in parallel, they are still typically analyzed in series (i.e. one at a time) to determine how "well" the reaction worked.  Analysis of the reactions tends to be the major bottleneck in this process, with each product molecule having to be physically separated from the rest of the reaction using a technique called chromatography.  The instruments that carry out this process, referred to either as HPLC or UPLC, can take several minutes to analyze a single sample, which can lead to prohibitively lengthy analysis times.  One promising solution to slow analysis is a technique called MALDI (Matrix-Assisted Laser Desorption/Ionization), a technique that involves using laser pulses on a dried sample of the reaction to ionize the molecules present into the air and then counting the number of product molecules that were ejected by the laser ablation.  These instruments can offer up to 300x speed increase over traditional chromatographic methods, which would allow researchers to significantly speed up the slowest segment of the HTE process.  One complciation is that MALDI is much less accurate than traditional chromatrographic methods in terms of giving an estimate of the yield of the reaction.  This inaccuracy stems from the fact that different molecules can ionize to different degrees under the MALDI laser based on their particular chemical structure.  The goal of this project is to be able to map the output from MALDI to that of traditional, more accurate approaches (UPLC) in order the reliable use of MALDI for HTE reaction analysis.
 <p align="center">
 	<img src="images/MALDI_TOF.png">
 </p>
-
 ## Data
 The data for this project was available in the supplementary information in the publication by Lin *et al*, which screened C-N couplings between secondary amines and heteorocyclic bromides (see reaction scheme below)<sup>1</sup>.  
 <p align="center">
 	<img src="images/example_reaction.png">
 </p>
-
 The molecules screened range in complexity and have a variety of functional groups, although a "simplest-partner" approach was used in all the bromide molecules were only screened against one simple amine molecule and likewise all the amine molecules were only screened against one simple bromide molecule.  Four different catalysts (Ru, Ir, Pd, Cu) are each tested on every combination of the given reactant molecules and the MALDI and UPLC-EIC (traditional analysis approach) measurements for the product of the reaction are recorded.  Additionally, the MALDI response for an internal standard is given for each reaction as well (the internal standard is the same across all reactions).  The identity of each reactant is also given as the SMILES string, which is a string representation that contains all the atomic and bonding information (we’ll return to this later).  The plot below shows the variance in the raw MALDI product response compared to the UPLC response (R^2 of line of best fit = 0.48).    
 <p align="center">
 	<img src="images/raw_MALDI_vs_UPLC_EIC_no_line.png">
 </p>
-
 # Modeling with Random Forest
 A Random Forest regressor model was chosen for this project because it provides good accuracy with relatively little training time and can easily handle high dimensional data.  A different random forest model was used for each catalyst type to avoid data leakage because the same set of reactions were applied across each of the catalyst types.  The UPLC-EIC data was used as the target for each reaction.  Initially, only the MALDI product response and the internal standard MALDI response as features, which resulted in an average R^2 of 0.63 across the four catalysts.  
 <p align="center">
@@ -56,12 +49,10 @@ SMILES strings contain all the atomic and bonding information for a molecule, in
 <p align="center">
 	<img src="images/smiles_to_graph.png">
 </p>
-
 Using a self-developed SMILES parser, the molecules for each reaction were converted to their graphical representation for further feature extraction.  The features were separated into two approaches : 1) molecule metadata and 2) fragment based analysis.  The molecule metadata included collecting features like molecular weight, number of atoms, number of each type of atom by element (divided further into aromatic vs nonaromatic).  The fragment analysis involved a much more complicated graph searching algorithm to find what chemical pieces made up each molecule.  This analysis involves the NP-complete subgraph isomorphism problem, i.e. given two graphs, determine whether one graph is contained within the other.  In this context, it means given a chemical graph of benzene, can an algorithm tell if the graph of a molecule contains a benzene subunit.  This analysis was affected by a self-developed subgraph searching algorithm that uses a recursive depth first search method paired with potential subgraph root pruning using a least common atom approach.  
 <p align="center">
 	<img src="images/one_hot_encoding.png">
 </p>
-
 The chemical fragments came from a hierarchical fragment library (more complex fragments are searched for first and atoms found to be in a fragment are not used in subsequent subgraph searches)  containing ~ 200 chemical fragments.  The fragment analysis was then represented as a one-hot-encoded features for each molecule.  The molecule metadata and fragment information was then combined with the original MALDI signal data and the random forest model was retuned and retrained.
 
 ## Improving Model with Molecular Features
@@ -69,7 +60,6 @@ The graph below shows the iterative improvements to the random forest model for 
 <p align="center">
 	<img src="images/RF_model_improvement.png">
 </p>
-
 This discrepancy is also mirrored in the relative feature importances (calculated as the mean decrease in variance due to a feature), with the fragment analysis features contributing a small portion in the decrease in variance compared to the MALDI output and the molecule metadata.  One possible reason for this is that the fragments searched for are highly specific chemical fragments that may only show up in a handful or even one example in the dataset.  
 <p align="center">
 	<img src="images/RF_feature_importances.png">
@@ -79,8 +69,6 @@ Because the dataset is so small (~400 reactions per catalyst), these features ar
 	<img src="images/RF_predictions_vs_EIC.png">
 </p>
 Additionally, a small gain was achieved by removing data points that included ambiguous structures (~40 structures).  These are structures where part of the molecule is obscured  and represented simply with an “R” group for proprietary reasons.  These groups could be as simple as a single carbon or could represent significant portions of the molecule and therefore their inclusion most likely leads the model to make more conservative predictions.
-
-
 
 ## Conclusion
 The sum total of the improvements to the models led to > 0.7 R^2 value for each catalyst type with an average R^2 value of 0.77.  The final models showed marked improvement compared to just using a line of best fit with the raw MALDI data (R^2 = 0.48) and just using MALDI output in a random forest model (avg R^2 = 0.63).  It should be noted that there are control studies within the cited paper which suggest that the overall process of running the reactions in small wells, measuring the MALDI output, and measuring the UPLC-EIC results in some experimental error.  This error was approximated by dosing the wells with a known amount of a deuterated product standard, which is the best experimental way of reducing experimental error.  This approach yielded a 0.85 R^2 value, which one can treat as a theoretical maximum accuracy due to experimental error for this high-throughput approach.  In this light, we can see that the modeling done in this project is approaching the usefulness of using a known product standard.  This represents a significant achievement, because having a known product standard for every single reaction is untenable due to the time it would take to isolate and characterize thousands of product standards.  Ultimately, this project should be seen as a proof of concept that modeling using a mix of chemical feature and MALDI output can successfully predict the outcome of a reaction.  

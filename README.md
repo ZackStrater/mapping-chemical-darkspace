@@ -14,7 +14,9 @@ Chemical darkspace, coined in a 2018 publication in Science<sup>1</sup> by Lin *
 </p>
 
 Understanding the countours of chemical darkspace is incredibly important for our ability to make advancements in scientific fields that use chemical reactions (hint: that's basically all of them).  Among the research fields that rely on exploring chemical darkspace, chief among them is drug development.  Nearly all new small molecule drugs exist somewhere in chemical darkspace.  It is the job of medicinal chemists to take an initial "hit" or "lead" compound, one that has shown promising pharmacological activity against a biological target, and optimize the medicinal qualities (i.e. reducing toxicity, increasing bioavailability) of that drug by exploring the darkspace around it.  
-![](images/Lead_optimization.png)
+<p align="center">
+	<img src="images/Lead_optimization.png">
+</p>
 
 Unfortunately, even the most used and most robust reactions can fail in these situations.  One example is C-N coupling reactions, which will be the focus of this project.  In the study by Lin *et al*, these reactions were reported to have a %35 failure across 10,000 examples in the electronic notebooks of Merck's researchers<sup>1</sup>.  Reaction failure can significantly hamper drug development by creating complications in accessing certain structures.  When researchers meet these stumbling blocks they must manually explore these reactions to figure out what went wrong, or abandon the prospects of those potentially useful structures.  This process is time consuming, very costly, and can lead to slowdowns in drug development or even abandonment of a drug campaign.  One way pharmaceutical companies are tackling this issue is by investing in programs to explore vast swaths of chemical darkspace either ahead of time or on demand using thousands of miniaturized and parallel reactions in a process known as high-throughput experimentation.
 
@@ -30,8 +32,9 @@ Advances in automation and robotics have significantly increased researchers abi
 This technique has allowed researchers to quickly explore and "map" areas of reactivity that are important to medicinal chemists.  One problem with this technique is that while the reactions can be run in parallel, they are still typically analyzed in series (i.e. one at a time).  Analysis of the reactions tends to be the major bottleneck in this process, with each product having to be physically separated from the rest of the reaction using a technique called chromatography.  The instruments that carry out this process, referred to either as HPLC or UPLC, can take several minutes to analyze a single sample, which can lead to prohibitively lengthy analysis times.  One promising solution to slow analysis is a technique called MALDI (Matrix-Assisted Laser Desorption/Ionization), a technique that uses laser ablation on a dried sample of the reaction to .  These instruments can offer up to 300x speed increase over traditional chromatographic methods, which would allow researchers to significantly speed up the slowest segment of the HTE process.  One complciation is that MALDI is much less accurate than traditional chromatrographic methods in terms of giving an estimate of the yield of the reaction.  This Inaccuracy stems from the fact that different molecules can ionize to different degrees under the MALDI laser based on the particular chemical structures that are present.  The goal of this project is to be able to map the output from MALDI to that of tradiotional, more accurate approaches
 IF the output of MALDI analysis could be effectively mapped ontothe output of traditional chromatographic methods   
 
-
-![](images/MALDI_TOF.png)
+<p align="center">
+	<img src="images/MALDI_TOF.png">
+</p>
 
 
 ## Data
@@ -41,8 +44,9 @@ The Data for this project was available in the supplementary information in the 
 
 
 # Modeling with Random Forest
-
-![](images/RF_Baseline.png)
+<p align="center">
+	<img src="images/RF_Baseline.png">
+</p>
 	A Random Forest regressor model was chosen for this project because it provides good accuracy with relatively little training time and can easily handle high dimensional data.  A different random forest model was used for each catalyst type to avoid data leakage because the same set of reactions were applied across each of the catalyst types.  The UPLC-EIC was used as the target for each reaction.  Initially, only the MALDI product response and the internal standard MALDI response as features, which resulted in an average R^2 of 0.63 across the four catalysts.  Interestingly, the catalysts showed some variance in their R^2 values, with Pd having the highest value at 0.71 and Cu having the lowest value at 0.56.  This variance may be a reflection of the chemical features of the catalysts interacting in more or less variable ways with the MALDI response.   
 
 	While this model represents a significant increase in reaction prediction compared to just the raw MALDI output (from 0.48 to 0.56 R^2), is there any further feature engineering possible to increase the accuracy?  The only remaining potential feature is the SMILES representation of each reactant molecule – how can we turn these strings into features for our model?
@@ -62,7 +66,10 @@ The fragment analysis involved a much more complicated graph searching algorithm
 The graph below shows the iterative improvements to the random forest model for each catalyst type.  The most significant gain in accuracy comes due to the addition of the molecule metadata, while fragment analysis did not yield significant results.  This discrepancy is also mirrored in the relative feature importances (calculated as the mean decrease in variance due to a feature), with the fragment analysis features contributing a small portion in the decrease in variance compared to the MALDI output and the molecule metadata.  One possible reason for this is that the fragments searched for are highly specific chemical fragments that may only show up in a handful or even one example in the dataset.  Because the dataset is so small (~400 reactions per catalyst), these features are not represented widely enough to be effectively used in the model.  Instead, it seems the model prefers the more generalizable features included in the molecule metadata.  If more reaction data were available and therefore more examples of each type of fragment, these fragment analysis features would theoretically  be utilized to a greater extent by the model and  presumably create a more accurate model because they convey more accurate chemical information about each molecule compared to the more generalized molecule metadata features.  
 ![](images/RF_model_improvement.png)
 ![](images/RF_feature_importances.png)
-![](images/chemical_RF_predictions_vs_EIC.png)
+
+<p align="center">
+	<img src="chemical_RF_predictions_vs_EIC.png">
+</p>
 Additionally, a small gain was achieved by removing data points that included ambiguous structures (~40 structures).  These are structures where part of the molecule is obscured  and represented simply with an “R” group for proprietary reasons.  These groups could be as simple as a single carbon or could represent significant portions of the molecule and therefore their inclusion most likely leads the model to make more conservative predictions.
 
 

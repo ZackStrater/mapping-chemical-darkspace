@@ -75,21 +75,26 @@ for i in range(len(data)):
     print(f'catalyst: {catalysts[i]} r^2 RF: {np.round(avg_r_sqr_RF, 3)}')
 
 
-# merging out of sample predictions
-df_Cu_pred = df_Cu.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
-df_Cu_pred.columns = ['Cu Normalized MALDI', 'Cu MALDI Product Intensity', 'Cu EIC(+)[M+H] Product Area', 'Cu preds', 'amine_string', 'bromide_string']
-df_Ir_pred = df_Ir.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
-df_Ir_pred.columns = ['Ir Normalized MALDI', 'Ir MALDI Product Intensity', 'Ir EIC(+)[M+H] Product Area', 'Ir preds', 'amine_string', 'bromide_string']
-df_Pd_pred = df_Pd.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
-df_Pd_pred.columns = ['Pd Normalized MALDI', 'Pd MALDI Product Intensity', 'Pd EIC(+)[M+H] Product Area', 'Pd preds', 'amine_string', 'bromide_string']
-df_Ru_pred = df_Ru.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
-df_Ru_pred.columns = ['Ru Normalized MALDI', 'Ru MALDI Product Intensity', 'Ru EIC(+)[M+H] Product Area', 'Ru preds', 'amine_string', 'bromide_string']
-dfs = [df_Cu_pred, df_Ir_pred, df_Pd_pred, df_Ru_pred]
-from functools import reduce
 
-df_predictions = reduce(lambda left, right: pd.merge(left, right, on=['amine_string', 'bromide_string']), dfs)
-
+df_predictions = pd.concat([df_Cu, df_Ir, df_Pd, df_Ru], axis=0)
 df_predictions.to_csv('../data/predictions.csv', index=False)
+
+
+# # merging out of sample predictions
+# df_Cu_pred = df_Cu.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
+# df_Cu_pred.columns = ['Cu Normalized MALDI', 'Cu MALDI Product Intensity', 'Cu EIC(+)[M+H] Product Area', 'Cu preds', 'amine_string', 'bromide_string']
+# df_Ir_pred = df_Ir.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
+# df_Ir_pred.columns = ['Ir Normalized MALDI', 'Ir MALDI Product Intensity', 'Ir EIC(+)[M+H] Product Area', 'Ir preds', 'amine_string', 'bromide_string']
+# df_Pd_pred = df_Pd.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
+# df_Pd_pred.columns = ['Pd Normalized MALDI', 'Pd MALDI Product Intensity', 'Pd EIC(+)[M+H] Product Area', 'Pd preds', 'amine_string', 'bromide_string']
+# df_Ru_pred = df_Ru.loc[:, ['normalized MALDI', 'MALDI Product Intensity', 'EIC(+)[M+H] Product Area', 'preds', 'amine_string', 'bromide_string']]
+# df_Ru_pred.columns = ['Ru Normalized MALDI', 'Ru MALDI Product Intensity', 'Ru EIC(+)[M+H] Product Area', 'Ru preds', 'amine_string', 'bromide_string']
+# dfs = [df_Cu_pred, df_Ir_pred, df_Pd_pred, df_Ru_pred]
+# from functools import reduce
+#
+# df_predictions = reduce(lambda left, right: pd.merge(left, right, on=['amine_string', 'bromide_string']), dfs)
+#
+# df_predictions.to_csv('../data/predictions_merged.csv', index=False)
 
 
 

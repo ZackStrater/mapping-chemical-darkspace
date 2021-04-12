@@ -73,7 +73,7 @@ Cu_importances = [0.696, 0.258, 0.046]
 Ir_importances = [0.769, 0.180, 0.051]
 Pd_importances = [0.804, 0.170, 0.026]
 Ru_importances = [0.806, 0.158,  0.035]
-features = ['MALDI', 'Metadata', 'Fragments']
+features = ['MALDI\nOutput', 'Molecule\nMetadata', 'Fragments\nAnalysis']
 ax = plt.subplot(111)
 ax.bar(x-0.2, Cu_importances, width=0.2, color='tab:green', align='center', label='Cu')
 ax.bar(x, Ir_importances, width=0.2, color='tab:blue', align='center', label='Ir')
@@ -83,6 +83,7 @@ ax.set_ylim(0, 1)
 ax.set_xticks(x)
 ax.set_xticklabels(features, size=15)
 ax.set_title('RF Grouped Feature Importances', size=20)
+ax.set_ylabel('Gini Importances', size=15)
 ax.legend()
 plt.show()
 

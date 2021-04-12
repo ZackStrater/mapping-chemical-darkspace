@@ -1,5 +1,5 @@
-# mapping-chemical-darkspace
-**with machine learning and chemical graphs**
+# Mapping Chemical Darkspace
+**with Machine Learning and Chemical Graphs**
 
 ## Introduction
 Making new molecules lies at the heart of many of the most important innovations, from making new and more effective drugs to energy storage.  However, our ability access new  molecules is limited by the reactions we have at our disposal.  Thus, one of the most important thrusts of chemical research is developing robust reactions that can diversify our the pool of molecules we can make.  Reaction development is one of the oldest research fields in any science (think making soap or gunpowder!), yet it still remains a fertile ground for new research.  Chemists continue to find new ways to make bonds between parts of molecules that were previously thought to be impossible and these advancements have been crucial for our ability to make progress in a variety of fields.
@@ -53,18 +53,28 @@ A Random Forest regressor model was chosen for this project because it provides 
 
 ## Feature Engineering with Chemical Graphs
 SMILES strings contain all the atomic and bonding information for a molecule, including which atoms are bonded to which other atoms, which is sufficient to convert them into a graphical representation of the molecule.  Molecules lend themselves well to graphical representation with atoms being represented as weighted nodes (corresponding to the element of the atom i.e. N, C, O . . .) and bonds being represented as weighted bidrectional edges (corresponding to the type of bond, i.e. single, double, triple bond).  The advantage of a graph representation of a molecule is it allows access the chemical information about what types of atoms, bonds, and chemical groups are present within the molecule.  
-![](images/smiles_to_graph.png)
+<p align="center">
+	<img src="images/smiles_to_graph.png">
+</p>
 
-Using a self-developed SMILES parser, the molecules for each reaction were converted to their graphical representation for further feature extraction.  The features were separated into two approaches : 1) molecule metadata and 2) fragment based analysis.  The molecule metadata included collecting features like molecular weight, number of atoms, number of each type of atom by element (divided further into aromatic vs nonaromatic).  The fragment analysis involved a much more complicated graph searching algorithm to find what chemical pieces made up each molecule.  This analysis involves the NP-complete subgraph isomorphism problem, i.e. given two graphs, determine whether one graph is contained within the other.  In this context, it means given a chemical graph of benzene, can an algorithm tell if the graph of a molecule contains a benzene subunit.  This analysis was affected by a self-developed subgraph searching algorithm that uses a recursive depth first search method paired with potential subgraph pruning using a least common atom approach.  
-![](images/one_hot_encoding.png)
+Using a self-developed SMILES parser, the molecules for each reaction were converted to their graphical representation for further feature extraction.  The features were separated into two approaches : 1) molecule metadata and 2) fragment based analysis.  The molecule metadata included collecting features like molecular weight, number of atoms, number of each type of atom by element (divided further into aromatic vs nonaromatic).  The fragment analysis involved a much more complicated graph searching algorithm to find what chemical pieces made up each molecule.  This analysis involves the NP-complete subgraph isomorphism problem, i.e. given two graphs, determine whether one graph is contained within the other.  In this context, it means given a chemical graph of benzene, can an algorithm tell if the graph of a molecule contains a benzene subunit.  This analysis was affected by a self-developed subgraph searching algorithm that uses a recursive depth first search method paired with potential subgraph root pruning using a least common atom approach.  
+<p align="center">
+	<img src="images/one_hot_encoding.png">
+</p>
 
-The fragments searched for  came from a hierarchical fragment library (more complex fragments are searched for and atoms found to be in a fragment are not used for further subgraph searches)  containing ~ 200 chemical fragments.  The fragment analysis was then represented as a one-hot-encoded features for each molecule.  The molecule metadata and fragment information was then combined with the original MALDI signal data and the random forest model was retrained.
+The chemical fragments came from a hierarchical fragment library (more complex fragments are searched for first and atoms found to be in a fragment are not used in subsequent subgraph searches)  containing ~ 200 chemical fragments.  The fragment analysis was then represented as a one-hot-encoded features for each molecule.  The molecule metadata and fragment information was then combined with the original MALDI signal data and the random forest model was retuned and retrained.
 
 ## Improving Model with Molecular Features
-The graph below shows the iterative improvements to the random forest model for each catalyst type.  The most significant gain in accuracy comes due to the addition of the molecule metadata, while fragment analysis did not yield significant results.  This discrepancy is also mirrored in the relative feature importances (calculated as the mean decrease in variance due to a feature), with the fragment analysis features contributing a small portion in the decrease in variance compared to the MALDI output and the molecule metadata.  One possible reason for this is that the fragments searched for are highly specific chemical fragments that may only show up in a handful or even one example in the dataset.  Because the dataset is so small (~400 reactions per catalyst), these features are not represented widely enough to be effectively used in the model.  Instead, it seems the model prefers the more generalizable features included in the molecule metadata.  If more reaction data were available and therefore more examples of each type of fragment, these fragment analysis features would theoretically  be utilized to a greater extent by the model and  presumably create a more accurate model because they convey more accurate chemical information about each molecule compared to the more generalized molecule metadata features.  
-![](images/RF_model_improvement.png)
-![](images/RF_feature_importances.png)
+The graph below shows the iterative improvements to the random forest model for each catalyst type.  The most significant gain in accuracy comes due to the addition of the molecule metadata, while fragment analysis did not yield significant improvement.  
+<p align="center">
+	<img src="images/RF_model_improvement.png">
+</p>
 
+This discrepancy is also mirrored in the relative feature importances (calculated as the mean decrease in variance due to a feature), with the fragment analysis features contributing a small portion in the decrease in variance compared to the MALDI output and the molecule metadata.  One possible reason for this is that the fragments searched for are highly specific chemical fragments that may only show up in a handful or even one example in the dataset.  
+<p align="center">
+	<img src="images/RF_feature_importances.png">
+</p>
+Because the dataset is so small (~400 reactions per catalyst), these features are not represented widely enough to be effectively used in the model.  Instead, it seems the model prefers to utilize the more generalizable features included in the molecule metadata.  If more reaction data were available and therefore more examples of each type of fragment, these fragment analysis features would theoretically  be utilized to a greater extent by the model and  presumably create a more accurate model because they convey more accurate chemical information about each molecule compared to the more generalized molecule metadata features.  There is also a lingering question...  
 <p align="center">
 	<img src="chemical_RF_predictions_vs_EIC.png">
 </p>

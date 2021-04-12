@@ -35,7 +35,7 @@ IF the output of MALDI analysis could be effectively mapped ontothe output of tr
 
 
 ## Data
-
+The Data for this project was available in the supplementary information in the 2018 Science publication (cite), which screen C-N couplings between secondary amines and heteorocyclic bromides (see reaction scheme below).  The molecules screened range in complexity and have a variety of functional groups.  Four different catalysts (Ru, Ir, Pd, Cu) are each tested on every combination of molecules and the MALDI and UPLC-EIC (chromatographic method) measurements for the product of the reaction are recorded.  Additionally, the MALDI response for an internal standard is given for each reaction as well (the internal standard is the same across all reactions).  The identity of each reactant is also given as the SMILES string, which is a string representation that contains all the atomic and bonding information (we’ll return to this later).  The plot below shows the variance in the MALDI response compared to the UPLC response (R^2 = 0.48).    
 ![](images/example_reaction.png)
 ![](images/raw_MALDI_vs_UPLC_EIC_no_line.png)
 

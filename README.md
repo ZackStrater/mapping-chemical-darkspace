@@ -66,6 +66,7 @@ This discrepancy is also mirrored in the relative feature importances (calculate
 	<img src="images/RF_feature_importances.png">
 </p>
 Because the dataset is so small (~400 reactions per catalyst), these features are not represented widely enough to be effectively used in the model.  Instead, it seems the model prefers to utilize the more generalizable features included in the molecule metadata.  If more reaction data were available and therefore more examples of each type of fragment, these fragment analysis features could theoretically  be utilized to a greater extent by the model and would presumably create a more accurate model because they convey more accurate chemical information about each molecule compared to the more generalized molecule metadata features. 
+(Update: the comparisons between one-hot encoded features and scalar features are misleading as the random forest 'Gini Importance' tends to weigh features with high cardinality more highly.  Future work will include alternate feature importance metrics)
 <p align="center">
 	<img src="images/RF_predictions_vs_EIC.png">
 </p>

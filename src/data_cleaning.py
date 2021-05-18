@@ -27,6 +27,8 @@ Cu_MALDI = df['Cu MALDI Product Intensity']
 Cu_norm_MALDI = df['Cu Normalized MALDI Pdt/IS']
 Cu_EIC = df['Cu EIC(+)[M+H] Product Area']
 
+
+# visualizing normalized MALDI vs UPLC EIC
 norm_MALDI_EIC, ax = plt.subplots()
 ax.scatter(Ru_norm_MALDI, Ru_EIC, label='Ru', alpha=0.5, s=20)
 ax.scatter(Pd_norm_MALDI, Pd_EIC, label='Pd', alpha=0.5, s=20)
@@ -37,7 +39,7 @@ ax.set_ylabel('EIC product area')
 ax.set_title('normalized MALDI vs EIC')
 ax.legend()
 
-
+# visualizing raw MALDI vs UPLC EIC
 MALDI_EIC, ax2 = plt.subplots()
 ax2.scatter(Ru_MALDI, Ru_EIC, label='Ru', alpha=0.5, s=20, color='tab:orange')
 ax2.scatter(Pd_MALDI, Pd_EIC, label='Pd', alpha=0.5, s=20, color='tab:red')
@@ -51,16 +53,19 @@ ax2.legend()
 plt.show()
 
 
-# combining data from each catalyst
-
+# separating data into each catalyst type
+# X contains all the chemical information for that reaction
 X = df.loc[:, 'Location':'Piperazines N-Aryl']
+# y_Cat contains the resulting data for that reaction for each catalyst type
 y_Cu = df.loc[:, 'Cu TWC Product Area': 'Cu Normalized MALDI Pdt/IS']
 y_Ir = df.loc[:, 'Ir TWC Product Area': 'Ir Normalized MALDI Pdt/IS']
 y_Pd = df.loc[:, 'Pd TWC Product Area': 'Pd Normalized MALDI Pdt/IS']
 y_Ru = df.loc[:, 'Ru TWC Product Area': 'Ru Normalized MALDI Pdt/IS']
 
+# These columns will store data about which catalyst type was used
 blank_cat_df = pd.DataFrame(np.zeros((384, 4)), columns=['Cu_cat', 'Ir_cat', 'Pd_cat', 'Ru_cat'])
 
+# combine reaction data with catalyst type columns and label appropriately
 y_Cu = pd.concat([y_Cu, blank_cat_df], axis=1)
 y_Cu['Cu_cat'] = 1
 y_Ir = pd.concat([y_Ir, blank_cat_df], axis=1)
@@ -70,6 +75,7 @@ y_Pd['Pd_cat'] = 1
 y_Ru = pd.concat([y_Ru, blank_cat_df], axis=1)
 y_Ru['Ru_cat'] = 1
 
+# Combine the chemical information with the reaction data for each catalyst type
 df_Cu = pd.concat([X, y_Cu], axis=1)
 df_Cu.rename(columns=dict(zip(df_Cu.columns[-12:-4], df_Cu.columns[-12:-4].str[3:])), inplace=True)
 df_Ir = pd.concat([X, y_Ir], axis=1)
@@ -79,6 +85,7 @@ df_Pd.rename(columns=dict(zip(df_Pd.columns[-12:-4], df_Pd.columns[-12:-4].str[3
 df_Ru = pd.concat([X, y_Ru], axis=1)
 df_Ru.rename(columns=dict(zip(df_Ru.columns[-12:-4], df_Ru.columns[-12:-4].str[3:])), inplace=True)
 
+# combine into one csv
 df_out = pd.concat([df_Cu, df_Ir, df_Pd, df_Ru], axis=0)
 print(df_out)
 

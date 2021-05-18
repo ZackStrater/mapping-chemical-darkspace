@@ -6,6 +6,25 @@ from src.fragments_library import special_cases, biomolecules, peptide_amino_aci
     common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments
 
 
+'''The find_fragment method allows a substructure search of a given chemical fragment within a molecule 
+(subgraph isomorphism).  Takes 
+  
+The fragmentize method allows a library of fragments to be searched for within a molecule via the find_fragment method.  
+Takes the SMILES string of a molecule and fragment libraries as *args as inputs.
+
+The fragment library should be ordered hierarchically, with more complex fragments being searched first.  Atoms found in 
+any given substructure search are marked as discovered and are not used in further substructure searches (unless 
+specified as "ghost atoms", see fragments_library).  
+The method will return a list of names of the fragments found and the labeled molecular structure as a tuple 
+-> (fragment_names_list, labeled_structure)
+
+If numeric=True, will return a vector with the count of the number of each fragment found and the labeled molecular 
+structure as a tuple
+-> (fragment_vector, labeled_structure)
+'''
+
+
+
 class AtomData:
     def __init__(self, symbol):
         self.symbol = symbol
@@ -573,23 +592,5 @@ def fragmentize(molecule_string, *fragment_libraries, numeric=False, verbose=Fal
         return fragments_counter, molecule_structure
     else:
         return fragment_names, molecule_structure
-
-
-# libraries = [common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases]
-# names, molecule = fragmentize(r'BrC1=CNC(=O)C=C1', *libraries)
-#
-# print(names)
-# molecule.assign_fragment_neighbors()
-
-#
-#
-# for fragment in molecule.fragments_list:
-#     for atom in fragment.atom_list:
-#         print(atom.symbol, fragment.name)
-# for fragment in molecule.fragments_list:
-#     cprint(fragment.name, 'blue')
-#     for f in fragment.fragment_bonded_to:
-#         cprint(f.name, 'red')
-# # #
 
 

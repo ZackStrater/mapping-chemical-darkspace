@@ -8,7 +8,7 @@ pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
 df = pd.read_csv('../data/merck_data_combined.csv')
-df['normalized MALDI'] = df['MALDI Product Intensity']/df['MALDI Internal Standard Intensity'] # TODO this is redundant (already in csv)
+df['normalized MALDI'] = df['MALDI Product Intensity']/df['MALDI Internal Standard Intensity']
 
 df = df.loc[:, ['bromide or amine', 'Canonical_Smiles', 'MALDI Product Intensity', 'MALDI Internal Standard Intensity',
                 'normalized MALDI', 'EIC(+)[M+H] Product Area', 'Cu_cat', 'Ir_cat', 'Pd_cat', 'Ru_cat',

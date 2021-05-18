@@ -1,16 +1,24 @@
 
-# TODO need to introduce a system to check anonymous heterocycles and polycyclic systems
 
-# TODO add N-O bonds as well as stray aromatic and non aromatic atoms
-# TODO add aryl fragments
+'''
+Libraries of fragments for subgraph searching
 
-# TODO maybe add system where atom has a fragemnt attribute (so you can tell if a nitrogen is conjugated for example)
+Libraries are in the format "fragment name: [list of SMILES strings]
+    -some fragments can be identified by multiple different SMILES strings
 
-# TODO add phantom bonds to pyridine etc so as not to include pyridinium
+Extra SMILES functionality:
+W, X, Y, Z:
+    These atoms should only be bonded to one other atom. They are consumed during SMILES interpretation and require the
+    additional constraint that the atom it is bonded to have a certain number of bonds (W:1, X:2, Y:3, Z:4)
+    i.e. COX would only find a match if the oxygen was bonded to two atoms, such as an ether
 
-# TODO may need to distinguish between susbistuted amine heterocycles (i.e. methyl piperidine and piperidine)
-
-'''library of fragments for subgraph searching'''
+{SMILES_substructure}:
+    The substructure within the curly brackets is labeled as "phantom atoms".  This has two effects:
+    1) phantom atoms can be matched in portions of the molecule that have already been "discovered"
+    2) if the substructure is matched, the phantom atoms are not marked as "discovered"
+    This can be helpful when wanting to distinguish between aryl and aliphatic functional groups
+    i.e. I{c} would only match aryl iodides without having to consume a portion of the aryl group it's attched to
+'''
 
 biomolecules = {
     "pyranose": ["OCC1OCC(O)C(O)C1O"],
@@ -326,3 +334,13 @@ special_cases = {
 }
 
 
+# TODO need to introduce a system to check anonymous heterocycles and polycyclic systems
+
+# TODO add N-O bonds as well as stray aromatic and non aromatic atoms
+# TODO add aryl fragments
+
+# TODO maybe add system where atom has a fragemnt attribute (so you can tell if a nitrogen is conjugated for example)
+
+# TODO add phantom bonds to pyridine etc so as not to include pyridinium
+
+# TODO may need to distinguish between susbistuted amine heterocycles (i.e. methyl piperidine and piperidine)

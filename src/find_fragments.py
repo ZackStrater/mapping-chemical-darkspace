@@ -14,7 +14,7 @@ Takes the SMILES string of a molecule and fragment libraries as *args as inputs.
 
 The fragment library should be ordered hierarchically, with more complex fragments being searched first.  Atoms found in 
 any given substructure search are marked as discovered and are not used in further substructure searches (unless 
-specified as "ghost atoms", see fragments_library).  
+specified as "phantom atoms", see fragments_library).  
 The method will return a list of names of the fragments found and the labeled molecular structure as a tuple 
 -> (fragment_names_list, labeled_structure)
 
@@ -22,7 +22,6 @@ If numeric=True, will return a vector with the count of the number of each fragm
 structure as a tuple
 -> (fragment_vector, labeled_structure)
 '''
-
 
 
 class AtomData:

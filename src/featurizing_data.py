@@ -7,13 +7,26 @@ pd.set_option('display.max_rows', 500)
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.width', 1000)
 
+
+
+'''
+Collecting and labeling features for each molecule in each reaction
+'''
+
+
+
+# Load dataset
 df = pd.read_csv('../data/merck_data_combined.csv')
 df['normalized MALDI'] = df['MALDI Product Intensity']/df['MALDI Internal Standard Intensity']
 
+# Selecting feature columns
 df = df.loc[:, ['bromide or amine', 'Canonical_Smiles', 'MALDI Product Intensity', 'MALDI Internal Standard Intensity',
                 'normalized MALDI', 'EIC(+)[M+H] Product Area', 'Cu_cat', 'Ir_cat', 'Pd_cat', 'Ru_cat',
                 'TPSA', 'cLogP', '# H-bond Acceptors', '# H-bond Donors', 'Rotatable bonds', 'Hinderance',
-                'Hinderance, binding', 'Hinderance, non binding',]]
+                'Hinderance, binding', 'Hinderance, non binding']]
+
+# Each reaction has an amine structure and a bromide structure.
+# Where 'bromide or amine' == 'bromide', a "simple" amine is used as the coupling partner and vice versa
 bromide_mask = df['bromide or amine'] == 'bromide'
 amine_mask = df['bromide or amine'] == 'amine'
 
@@ -25,16 +38,25 @@ df.loc[bromide_mask, 'bromide_string'] = df.loc[bromide_mask, 'Canonical_Smiles'
 df.loc[amine_mask, 'bromide_string'] = simple_bromide_string
 df.loc[amine_mask, 'amine_string'] = df.loc[amine_mask, 'Canonical_Smiles']
 
+# fragment libraries to be used in the fragmentize method:
 libraries = [common_aromatic_heterocycles, generalized_heterocycles, arenes, functional_groups, hydrocarbons, aromatic_fragments, special_cases]
+
+# column names for the feature vector produced by the fragmentize method:
 fragment_feature_column_names = [frag for lib in libraries if lib != generalized_heterocycles for frag in lib]
+
+# generalized structures are labeled separately
 generalized_names = ["0-5M-het", "1-5M-het", "2-5M-het", "3-5M-het", "4-5M-het",
                     "0-6M-het", "1-6M-het", "2-6M-het", "3-6M-het", "4-6M-het",
                     "0-6+5M-het", "1-6+5M-het", "2-6+5M-het", "3-6+5M-het", "4-6+5M-het", "5-6+5M-het", "6-6+5M-het",
                     "0-6+6M-het", "1-6+6M-het", "2-6+6M-het", "3-6+6M-het", "4-6+6M-het", "5-6+6M-het", "6-6+6M-het"]
 
 fragment_feature_column_names.extend(generalized_names)
+
+# Add a feature vector for both the amine and bromide
 amine_feature_column_names = ['a_' + name for name in fragment_feature_column_names]
 bromide_feature_column_names = ['b_' + name for name in fragment_feature_column_names]
+
+# columns names for the generalized molecular features:
 metadata_column_names = ['mw', 'num_atoms', 'num_nitrogens', 'num_aromatic_nitrogens', 'num_non_aromatic_nitrogens', 'num_oxygens',
     'num_aromatic_oxygens', 'num_non_aromatic_oxygens', 'num_sulfurs', 'num_heteratoms', 'num_carbons', 'num_aromatic_carbons',
     'num_non_aromatic_carbons', 'num_FG', 'num_heterocycles', 'num_nitrogens_per_mw', 'num_oxygens_per_mw', 'num_sulfurs_per_mw',
@@ -43,9 +65,11 @@ metadata_column_names = ['mw', 'num_atoms', 'num_nitrogens', 'num_aromatic_nitro
 amine_metadata_column_names = ['a_' + name for name in metadata_column_names]
 bromide_metadata_column_names = ['b_' + name for name in metadata_column_names]
 
+# get feature vectors for molecules
 def featurize_molecules(smiles_string):
     return pd.Series(fragmentize(smiles_string, *libraries, numeric=True)[0])
 
+# get generalized molecular features for molecules
 def add_molecule_metadata(smiles_string):
     molecule = fragmentize(smiles_string, *libraries)[1]
     mw = molecule.mw()
@@ -116,6 +140,7 @@ def add_molecule_metadata(smiles_string):
 
     return pd.Series(output)
 
+# identifies the fragment involved in coupling and the fragments directly attached to it
 def get_coupling_fragments_and_neighbors(amine_smiles_string, bromide_smiles_string):
     amine = fragmentize(amine_smiles_string, *libraries)[1]
     amine.assign_fragment_neighbors()
@@ -198,7 +223,6 @@ bromide_het_coupling_fragment_column_names = ['bromide_het_frag_' + name for nam
 bromide_het_neighbor_framgent_column_names = ['bromide_het_neighbor_' + name for name in fragment_feature_column_names]
 get_coupling_fragments_and_neighbors_column_names = amine_coupling_fragment_column_names + amine_neighbor_fragment_column_names + bromide_het_coupling_fragment_column_names + bromide_het_neighbor_framgent_column_names
 
-print(df)
 df[amine_metadata_column_names] = df['amine_string'].apply(lambda x: add_molecule_metadata(x))
 df[bromide_metadata_column_names] = df['bromide_string'].apply(lambda x: add_molecule_metadata(x))
 df[amine_feature_column_names] = df['amine_string'].apply(lambda x: featurize_molecules(x))
@@ -207,19 +231,10 @@ df[get_coupling_fragments_and_neighbors_column_names] = df.apply(lambda x: get_c
 
 
 R_mask = df['Canonical_Smiles'].str.contains('[R]')
-print(df.shape)
 df = df[~R_mask] # remove rows where molecules have obscured groups
 
 df.drop(['bromide or amine', 'Canonical_Smiles'], axis=1, inplace=True)
-# df.drop(['amine_string', 'bromide_string'], axis=1, inplace=True)
+df.drop(['amine_string', 'bromide_string'], axis=1, inplace=True)
 
-
-print(df.shape)
 df.to_csv('../data/featurized_data.csv', index=False)
 
-
-# ablation studies (without different features)
-# remove molecules with R groups
-# add more feature from merck dataset
-# try separated models
-# try other models (GB and NN)

@@ -1,10 +1,9 @@
 import re
 
-'''converts molecular structure to smiles string'''
+'''Converts molecular structure to smiles string'''
 
 
-
-bond_decoder = {   # TODO add chiral stereochemistry
+bond_decoder = {
     1: "",  # single bond
     2: "=",  # double bond
     3: "#",  # triple bond
@@ -30,7 +29,7 @@ class AtomSmiles:
         self.closure_partners = []
 
 
-def convert_to_smiles(molecule, start):    # TODO don't have molecule as an arg, just include it in func @@@@
+def convert_to_smiles(molecule, start):
     smiles_string = ""
     smiles_construction_list = []
     # ordered list of atoms and parentheses
@@ -94,7 +93,6 @@ def convert_to_smiles(molecule, start):    # TODO don't have molecule as an arg,
     dfs(start, None)
     # begin dfs process
 
-    # TODO does this even do anything? maybe trying to reorder ring numbers so they go in order?
     # atom_ring_list = []
     # for ele in smiles_construction_list:
     #     if isinstance(ele, Atom):
@@ -114,8 +112,7 @@ def convert_to_smiles(molecule, start):    # TODO don't have molecule as an arg,
 
     return smiles_string
 
-# TODO unnecessary parens when entering a ring
-# TODO ring numbers out of order
+
 
 
 
